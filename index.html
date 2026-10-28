@@ -5,430 +5,392 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Gastro Galaxy: A Journey Inside the Human Body</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Custom Animations & Styles */
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
-        
+        * {
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: 'Fredoka', sans-serif;
-            background-color: #0f172a; /* Fallback */
+            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+            color: #1e293b;
+            min-height: 100vh;
             margin: 0;
-            padding: 0;
-            overflow: hidden; /* Prevent scrolling */
-            touch-action: none; /* Prevent mobile pull-to-refresh */
+            overflow-x: hidden;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 100vw;
-            height: 100vh;
-        }
-        
-        #app-container {
-            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
-            width: 100vw;
-            height: 56.25vw; /* Rasio 16:9 */
-            max-width: 1920px;
-            max-height: 1080px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        @media (min-aspect-ratio: 16/9) {
-            #app-container {
-                width: 177.78vh; /* Menjaga rasio 16:9 di layar ultra-wide */
-                height: 100vh;
-            }
-        }
-
+        /* Responsive Screen Container matching mobile and laptop viewports automatically */
         .screen {
             display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
+            max-width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Splash Screen specific background image styling with transparent overlay to keep background clear */
+        #splashScreen {
+            background: linear-gradient(rgba(2, 132, 199, 0.25), rgba(3, 105, 161, 0.45)), url('https://i.imgur.com/5JNcJuS.jpeg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        @media (min-width: 768px) {
+            .screen {
+                max-width: 520px;
+                height: 90vh;
+                max-height: 880px;
+                border-radius: 2.5rem;
+                border: 3px solid rgba(255, 255, 255, 0.7);
+            }
         }
 
         .screen.active {
             display: flex;
         }
 
-        /* Floating Animation for decor */
-        .float-anim {
-            animation: floating 3s ease-in-out infinite;
+        /* Custom Animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
         }
 
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        .floating {
+            animation: floatSlow 4s ease-in-out infinite;
         }
 
-        /* Pulse for buttons */
-        .pulse-btn {
-            animation: pulse 2s infinite;
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.8); }
         }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(74, 222, 128, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+        .glow-box {
+            animation: pulseGlow 3s ease-in-out infinite;
         }
 
-        /* Hide scrollbar for evaluation area */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        @keyframes scaleUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+
+        .animate-scaleUp {
+            animation: scaleUp 0.25s ease-out forwards;
         }
-        
-        canvas {
+
+        /* Canvas Game Styles */
+        #gameCanvas {
+            touch-action: none;
             display: block;
+            background: url('https://i.imgur.com/oFtGj5p.png') no-repeat center center;
+            background-size: cover;
             width: 100%;
             height: 100%;
         }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(14, 165, 233, 0.3);
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body class="text-slate-100 bg-[#0f172a]">
+<body class="p-0 md:p-4">
 
-    <!-- App Container (1920x1080 aspect ratio scaled) -->
-    <div id="app-container" class="md:border-4 md:rounded-2xl border-indigo-500">
-        
-        <!-- 1. SPLASH SCREEN -->
-        <div id="splash-screen" class="screen active flex-col items-center justify-center p-6 text-center z-20" style="background-image: url('https://i.imgur.com/zaOJMBl.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-            
-            <!-- Logo Kiri Bawah -->
-            <img src="https://i.imgur.com/VK9OERw.png" alt="Logo Kiri Bawah" class="absolute bottom-0 -left-24 md:-left-40 lg:-left-60 h-64 md:h-[450px] lg:h-[600px] w-auto drop-shadow-xl pointer-events-none z-0">
-
-            <!-- Logo Kanan Bawah -->
-            <img src="https://i.imgur.com/SYD7P0c.png" alt="Logo Kanan Bawah" class="absolute bottom-0 -right-8 md:right-0 lg:-right-10 h-64 md:h-[450px] lg:h-[600px] w-auto drop-shadow-xl pointer-events-none z-0">
-
-            <!-- Title -->
-            <h1 class="relative z-10 text-4xl md:text-5xl font-extrabold mb-2 mt-4 md:mt-8 drop-shadow-[0_6px_8px_rgba(0,0,0,0.9)]" style="-webkit-text-stroke: 2px rgba(0,0,0,0.6);">
-                <span class="text-[#86efac]">Gastro</span> <span class="text-[#d8b4fe]">Galaxy</span>
-            </h1>
-            <h2 class="relative z-10 text-sm md:text-lg font-bold text-pink-300 mb-8 drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)] tracking-wide bg-black/40 px-6 py-2 rounded-full backdrop-blur-sm border border-pink-400/30">A Journey Inside the Human Body</h2>
-            
-            <!-- Creator Info -->
-            <div class="relative z-10 bg-indigo-950/70 p-5 rounded-2xl border border-indigo-300/50 mb-8 backdrop-blur-md w-72 shadow-2xl">
-                <p class="text-sm text-indigo-200 mb-1 drop-shadow-md">Dibuat oleh:</p>
-                <p class="text-xl font-extrabold text-white mb-1 drop-shadow-md">Erlina Fitri Hapsari</p>
-                <p class="text-xs text-indigo-300 drop-shadow-md font-semibold">Cabang PGRI Wuryantoro</p>
+    <!-- 1. HALAMAN PEMBUKA (SPLASH SCREEN) -->
+    <div id="splashScreen" class="screen active justify-between p-6 sm:p-8">
+        <!-- Header Logos Only -->
+        <div class="flex justify-between items-center w-full bg-white/75 p-3 rounded-2xl border border-white/60 shadow-sm backdrop-blur-md">
+            <div class="flex items-center space-x-2">
+                <img src="https://i.imgur.com/T6aOawO.png" alt="Logo PGRI" class="w-10 h-10 object-contain drop-shadow" onerror="this.src='https://placehold.co/40x40/38bdf8/ffffff?text=PGRI'">
+                <span class="text-xs font-bold text-sky-900">PGRI Wuryantoro</span>
             </div>
-
-            <!-- Buttons -->
-            <div class="relative z-10 flex flex-col space-y-5 w-64">
-                <button onclick="navTo('info-screen')" class="pulse-btn bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold py-4 px-8 rounded-full text-xl shadow-[0_4px_25px_rgba(34,197,94,0.6)] transition-transform transform hover:scale-110 active:scale-95 border-b-4 border-green-700 active:border-b-0 active:mt-1">
-                    Mulai Bermain
-                </button>
-                <!-- Tombol Menu Audio -->
-                <button onclick="toggleAudio()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg border-b-4 border-indigo-800 transition-transform transform hover:scale-105 active:scale-95 active:border-b-0 active:mt-1 flex items-center justify-center">
-                    <span id="menu-music-text">🔊 Musik: ON</span>
-                </button>
-            </div>
-            
-        </div>
-
-        <!-- 2. INFO & SETUP SCREEN -->
-        <div id="info-screen" class="screen flex-col items-center justify-center p-6 z-20" style="background: rgba(15, 23, 42, 0.9);">
-            <div class="bg-slate-900/90 p-8 md:p-10 rounded-3xl border-2 border-indigo-400 backdrop-blur-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto no-scrollbar shadow-[0_0_50px_rgba(99,102,241,0.3)]">
-                
-                <h2 class="text-4xl font-extrabold text-center text-blue-300 mb-6 drop-shadow-md">Informasi Game</h2>
-                
-                <!-- Capaian Pembelajaran -->
-                <div class="mb-8 bg-indigo-800/60 p-5 rounded-2xl border border-indigo-400 shadow-inner">
-                    <h3 class="text-2xl font-bold text-pink-300 mb-3 flex items-center">
-                        <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path></svg>
-                        Tujuan Pembelajaran (CP)
-                    </h3>
-                    <p class="text-base md:text-lg text-slate-200 leading-relaxed text-justify">
-                        Siswa Kelas 5 SD diharapkan dapat mengidentifikasi organ penyusun sistem pencernaan, menjelaskan fungsinya, menganalisis proses pencernaan dari mulut hingga pembuangan, dan memahami cara menjaga kesehatannya.
-                    </p>
-                </div>
-
-                <!-- Cara Bermain -->
-                <div class="mb-8">
-                    <h3 class="text-2xl font-bold text-green-300 mb-3 flex items-center">
-                        <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        Cara Bermain
-                    </h3>
-                    <ul class="list-disc list-inside text-base md:text-lg text-slate-200 space-y-2">
-                        <li>Sentuh / Klik layar untuk menembakkan panah ke balon.</li>
-                        <li>Jika panah mengenai balon gizi, sebuah kuis pencernaan akan muncul!</li>
-                        <li>Jawab pertanyaan dengan benar untuk mendapat skor.</li>
-                        <li>Awas, waktu (timer) terus berjalan! Kumpulkan skor sebanyak mungkin.</li>
-                    </ul>
-                </div>
-
-                <!-- Difficulty Selection -->
-                <h3 class="text-2xl font-extrabold text-center text-yellow-300 mb-4 drop-shadow-md">Pilih Kesulitan</h3>
-                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6 mb-8">
-                    <button onclick="startGame('easy')" class="flex-1 bg-green-500 hover:bg-green-400 py-4 rounded-2xl font-extrabold text-xl md:text-2xl transition border-b-8 border-green-700 active:border-b-0 active:translate-y-2 shadow-lg text-white">Mudah</button>
-                    <button onclick="startGame('medium')" class="flex-1 bg-yellow-500 hover:bg-yellow-400 py-4 rounded-2xl font-extrabold text-xl md:text-2xl transition border-b-8 border-yellow-700 active:border-b-0 active:translate-y-2 shadow-lg text-white">Sedang</button>
-                    <button onclick="startGame('hard')" class="flex-1 bg-red-500 hover:bg-red-400 py-4 rounded-2xl font-extrabold text-xl md:text-2xl transition border-b-8 border-red-700 active:border-b-0 active:translate-y-2 shadow-lg text-white">Sulit</button>
-                </div>
-
-                <div class="text-center">
-                    <button onclick="navTo('splash-screen')" class="text-slate-400 hover:text-white font-bold text-lg underline hover:no-underline transition">← Kembali ke Menu Utama</button>
-                </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold text-sky-900 text-right">Pemkab Wonogiri</span>
+                <img src="https://i.imgur.com/h8i5pWV.png" alt="Logo Pemkab Wonogiri" class="w-10 h-10 object-contain drop-shadow" onerror="this.src='https://placehold.co/40x40/a855f7/ffffff?text=WONOGIRI'">
             </div>
         </div>
 
-        <!-- 3. GAMEPLAY SCREEN -->
-        <div id="game-screen" class="screen flex-col z-10" style="background-image: url('https://i.imgur.com/utCGWPA.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <!-- Center Branding (Separate Compact Boxes) -->
+        <div class="flex flex-col items-center text-center my-auto space-y-4 relative w-full">
+            <!-- Title Box (Transparent Glassmorphic & Extra Large Title) -->
+            <div class="bg-white/40 px-6 py-6 rounded-3xl backdrop-blur-md shadow-2xl border border-white/60 max-w-sm w-full transform hover:scale-105 transition duration-300">
+                <h1 class="text-5xl sm:text-7xl font-black tracking-wide bg-gradient-to-r from-sky-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent drop-shadow-xl" style="line-height: 1.1;">
+                    Gastro Galaxy
+                </h1>
+                <p class="text-slate-900 text-xs sm:text-sm font-extrabold mt-2.5 tracking-wider uppercase">A Journey Inside the Human Body</p>
+            </div>
             
-            <!-- HUD (Top Bar) -->
-            <div class="absolute top-0 w-full p-6 flex justify-between items-center bg-gradient-to-b from-indigo-950/90 to-transparent z-30 pointer-events-none">
-                
-                <!-- Score -->
-                <div class="flex items-center space-x-3 bg-slate-900/80 px-5 py-2 rounded-full border-2 border-indigo-400 pointer-events-auto shadow-lg backdrop-blur-sm">
-                    <svg class="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
-                    <span id="hud-score" class="font-extrabold text-2xl text-white">0</span>
-                </div>
-
-                <!-- Timer -->
-                <div class="flex items-center space-x-3 bg-slate-900/80 px-5 py-2 rounded-full border-2 border-indigo-400 pointer-events-auto shadow-lg backdrop-blur-sm">
-                    <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span id="hud-timer" class="font-extrabold text-2xl text-white">120s</span>
-                </div>
-
-                <!-- Lives -->
-                <div class="flex items-center space-x-2 bg-slate-900/80 px-4 py-2 rounded-full border-2 border-indigo-400 pointer-events-auto shadow-lg backdrop-blur-sm" id="hud-lives">
-                    <!-- Heart SVGs populated by JS -->
-                </div>
-
-                <!-- Controls -->
-                <div class="flex space-x-3 pointer-events-auto">
-                    <button onclick="toggleAudio()" id="btn-audio" class="p-3 bg-slate-800 rounded-full hover:bg-slate-700 border-2 border-slate-500 transition shadow-lg active:scale-95">
-                        <!-- Sound ON SVG -->
-                        <svg id="icon-sound-on" class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5 10C3.9 10 3 10.9 3 12s.9 2 2 2h3l4 4V6L8 10H5z"></path></svg>
-                        <!-- Sound OFF SVG (Hidden by default) -->
-                        <svg id="icon-sound-off" class="w-6 h-6 text-red-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h2.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z m9.414-1.414l5-5m0 5l-5-5"></path></svg>
-                    </button>
-                    <button onclick="togglePause()" class="p-3 bg-slate-800 rounded-full hover:bg-slate-700 border-2 border-slate-500 transition shadow-lg active:scale-95">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </button>
-                </div>
+            <!-- Metadata Box (Centered text, no material label, no blue PGRI text) -->
+            <div class="bg-white/75 border border-white/70 rounded-2xl px-4 py-3 w-full max-w-xs text-center space-y-1 text-xs text-slate-800 shadow-lg backdrop-blur-md">
+                <p class="text-center font-bold text-sky-900">Erlina Fitri Hapsari</p>
+                <p class="text-center font-bold text-sky-900">Cabang PGRI Wuryantoro</p>
             </div>
-
-            <!-- The Game Canvas -->
-            <canvas id="game-canvas"></canvas>
-
-            <!-- Quiz Modal Overlay (Hidden by default) -->
-            <div id="quiz-modal" class="absolute top-0 left-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-4">
-                <div class="bg-indigo-900 border-4 border-indigo-400 rounded-3xl w-full max-w-2xl p-8 shadow-[0_0_50px_rgba(99,102,241,0.5)] text-center relative overflow-hidden">
-                    <div id="quiz-feedback-overlay" class="absolute inset-0 z-10 hidden flex-col items-center justify-center bg-indigo-900/95 backdrop-blur-sm">
-                        <div id="quiz-feedback-icon" class="mb-6 drop-shadow-lg"></div>
-                        <h3 id="quiz-feedback-text" class="text-5xl font-extrabold mb-4 drop-shadow-md"></h3>
-                        <p id="quiz-feedback-desc" class="text-lg md:text-xl text-slate-200 px-8 mb-8 font-medium leading-relaxed"></p>
-                        <button onclick="resumeGameAfterQuiz()" class="bg-blue-500 hover:bg-blue-400 text-white px-10 py-4 rounded-full font-bold text-2xl transition border-b-8 border-blue-700 active:border-b-0 active:translate-y-2 shadow-xl">Lanjutkan</button>
-                    </div>
-
-                    <div class="text-sm font-extrabold text-indigo-300 tracking-widest mb-4 uppercase bg-indigo-950/50 inline-block px-4 py-1 rounded-full">Kuis Pencernaan</div>
-                    <h3 id="quiz-question" class="text-2xl md:text-3xl font-bold mb-8 text-white leading-snug drop-shadow-md"></h3>
-                    
-                    <div id="quiz-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Options injected by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pause Modal Overlay -->
-            <div id="pause-modal" class="absolute top-0 left-0 w-full h-full bg-slate-950/80 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4">
-                <h2 class="text-6xl font-extrabold text-white mb-10 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">Game Dijeda</h2>
-                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6">
-                    <button onclick="togglePause()" class="bg-green-500 hover:bg-green-400 text-white px-10 py-4 rounded-2xl font-bold text-3xl transition border-b-8 border-green-700 active:border-b-0 active:translate-y-2 shadow-xl">Lanjut Main</button>
-                    <button onclick="navTo('splash-screen'); resetGame();" class="bg-red-500 hover:bg-red-400 text-white px-10 py-4 rounded-2xl font-bold text-3xl transition border-b-8 border-red-700 active:border-b-0 active:translate-y-2 shadow-xl">Keluar Game</button>
-                </div>
-            </div>
-
         </div>
 
-        <!-- 4. RESULT SCREEN -->
-        <div id="result-screen" class="screen flex-col items-center justify-start pt-16 pb-10 px-8 z-20 bg-gradient-to-b from-indigo-950 via-slate-900 to-black overflow-y-auto no-scrollbar relative">
-            
-            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 pointer-events-none"></div>
-
-            <h1 id="result-title" class="text-6xl md:text-7xl font-extrabold text-center text-yellow-400 mb-6 drop-shadow-[0_0_20px_rgba(250,204,21,0.5)] z-10">Kerja Bagus!</h1>
-            
-            <!-- Stars -->
-            <div id="result-stars" class="flex space-x-4 mb-8 z-10">
-                <!-- SVGs injected via JS -->
-            </div>
-
-            <!-- Score -->
-            <div class="bg-slate-800/80 rounded-3xl p-6 border-4 border-indigo-500 mb-10 text-center w-full max-w-md shadow-[0_0_40px_rgba(99,102,241,0.4)] backdrop-blur-md z-10">
-                <p class="text-indigo-300 text-xl font-bold mb-2 uppercase tracking-widest">Skor Akhir</p>
-                <p id="result-score" class="text-7xl md:text-8xl font-black text-white drop-shadow-lg">0</p>
-            </div>
-
-            <!-- Evaluation Box -->
-            <div class="w-full max-w-4xl bg-slate-800/70 rounded-2xl p-6 border-2 border-slate-600 mb-12 shadow-2xl backdrop-blur-md z-10">
-                <h3 class="text-2xl font-extrabold text-blue-300 mb-6 border-b-2 border-slate-600 pb-3 flex items-center justify-center">
-                    <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    Rincian Evaluasi Jawaban
-                </h3>
-                <div id="evaluation-list" class="space-y-4 max-h-[40vh] overflow-y-auto pr-4 no-scrollbar">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 w-full max-w-2xl z-10">
-                <button onclick="navTo('info-screen')" class="flex-1 bg-green-500 hover:bg-green-400 text-white py-5 rounded-2xl font-extrabold text-2xl transition border-b-8 border-green-700 active:border-b-0 active:translate-y-2 shadow-xl">Main Lagi</button>
-                <button onclick="navTo('splash-screen')" class="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-5 rounded-2xl font-extrabold text-2xl transition border-b-8 border-slate-800 active:border-b-0 active:translate-y-2 shadow-xl">Menu Utama</button>
-            </div>
-            
-            <!-- Safe margin bottom -->
-            <div class="h-16"></div>
+        <!-- Action Buttons (Compact & Centered) -->
+        <div class="flex flex-col items-center space-y-2.5 w-full max-w-[240px] mx-auto bg-white/75 p-3.5 rounded-2xl backdrop-blur-md shadow-lg border border-white/70">
+            <button onclick="goToScreen('eduScreen'); startBGM();" class="w-full py-2.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                <span>🚀 Mulai Petualangan</span>
+            </button>
+            <button onclick="goToScreen('eduScreen'); startBGM(); setTimeout(openInstructionsTab, 100);" class="w-full py-2 px-4 bg-white/90 hover:bg-sky-50 text-sky-700 font-semibold rounded-xl border border-sky-200 transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs shadow-sm">
+                <span>📖 Petunjuk Bermain & TP</span>
+            </button>
+            <!-- Tombol On/Off Musik di Bagian Paling Bawah Splash Screen -->
+            <button id="musicToggleBtn" onclick="toggleAudio()" class="w-full py-2 px-4 bg-white/90 hover:bg-sky-50 text-sky-800 font-bold rounded-xl border border-sky-200 transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs shadow-sm">
+                <span id="musicToggleText">🔊 Musik On</span>
+            </button>
         </div>
-
     </div>
 
-    <!-- MAIN JAVASCRIPT -->
-    <script>
-        // --- 1. DATA KUIS (Kurikulum Merdeka - IPAS SD Kls 5 - Sistem Pencernaan) ---
-        const questionBank = [
-            // EASY
-            { q: "Proses pencernaan pertama kali terjadi di mana?", opts: ["Lambung", "Mulut", "Usus Halus", "Kerongkongan"], ans: 1, diff: "easy", exp: "Di dalam mulut, makanan dikunyah oleh gigi (mekanik) dan dibantu air liur (kimiawi)." },
-            { q: "Organ pencernaan apa yang berfungsi memotong dan mengunyah makanan?", opts: ["Gigi", "Lidah", "Tenggorokan", "Usus Besar"], ans: 0, diff: "easy", exp: "Gigi berfungsi secara mekanik memotong dan menghancurkan makanan agar mudah ditelan." },
-            { q: "Sisa makanan yang tidak diserap tubuh akan dibuang melalui...", opts: ["Mulut", "Usus Buntu", "Anus", "Lambung"], ans: 2, diff: "easy", exp: "Anus adalah ujung saluran pencernaan tempat keluarnya feses (sisa makanan)." },
-            { q: "Saluran yang menghubungkan mulut dengan lambung disebut...", opts: ["Kerongkongan", "Tenggorokan", "Usus", "Pankreas"], ans: 0, diff: "easy", exp: "Kerongkongan (Esofagus) merupakan saluran pencernaan, sedangkan tenggorokan untuk pernapasan." },
-            { q: "Alat pencernaan yang membantu mendorong makanan ke kerongkongan adalah...", opts: ["Gigi", "Lidah", "Bibir", "Gusi"], ans: 1, diff: "easy", exp: "Lidah berfungsi mengatur letak makanan saat dikunyah dan membantu mendorongnya masuk ke kerongkongan." },
-            { q: "Bentuk lambung manusia menyerupai...", opts: ["Kantong", "Pipa memanjang", "Bola", "Kotak"], ans: 0, diff: "easy", exp: "Lambung berbentuk seperti kantong elastis yang terletak di rongga perut sebelah kiri atas." },
-            { q: "Makan sambil berbicara dapat menyebabkan kita...", opts: ["Tersedak", "Sakit gigi", "Sembelit", "Diare"], ans: 0, diff: "easy", exp: "Saat berbicara, katup epiglotis terbuka sehingga makanan bisa masuk ke saluran pernapasan dan menyebabkan tersedak." },
-            { q: "Manakah yang BUKAN merupakan organ pencernaan?", opts: ["Kerongkongan", "Lambung", "Paru-paru", "Usus Halus"], ans: 2, diff: "easy", exp: "Paru-paru adalah organ sistem pernapasan, bukan sistem pencernaan." },
+
+    <!-- 2. HALAMAN EDUKASI & PENGATURAN -->
+    <div id="eduScreen" class="screen justify-between p-6 sm:p-8" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%); color: #f8fafc;">
+        <div class="flex justify-between items-center w-full">
+            <button onclick="goToScreen('splashScreen')" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center border border-white/20 text-white transition">
+                ⬅️
+            </button>
+            <h2 class="text-lg font-bold text-sky-300">Pusat Edukasi & Pengaturan</h2>
+            <div class="w-10"></div>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="my-4 flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+            <!-- Tabs Header -->
+            <div class="flex bg-white/10 p-1 rounded-xl border border-white/20 backdrop-blur-md">
+                <button id="tabBtnGuide" onclick="switchTab('guide')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition">Cara Bermain</button>
+                <button id="tabBtnTP" onclick="switchTab('tp')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition">Tujuan Pembelajaran</button>
+            </div>
+
+            <!-- Tab Content: Guide -->
+            <div id="tabGuide" class="space-y-3 text-xs sm:text-sm text-slate-200 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-sm">
+                <h3 class="font-bold text-sky-300 text-base">☀️ Petualangan UFO Pencernaan</h3>
+                <ul class="list-disc pl-4 space-y-2">
+                    <li><strong>Gerak Peluncur:</strong> Geser jari atau mouse ke kiri/kanan di area layar untuk menggerakkan peluncur UFO dengan bebas.</li>
+                    <li><strong>Menembak Otomatis / Tap:</strong> Ketuk layar untuk menembakkan laser ke atas.</li>
+                    <li><strong>UFO Pencernaan:</strong> Hancurkan UFO yang muncul dari segala arah dengan tembakan laser!</li>
+                    <li><strong>Kuis Kilat & Animasi:</strong> Setiap UFO yang hancur membuka soal kuis interaktif lengkap dengan ilustrasi animasi organ tubuh yang sesuai.</li>
+                </ul>
+            </div>
+
+            <!-- Tab Content: TP -->
+            <div id="tabTP" class="hidden space-y-3 text-xs sm:text-sm text-slate-200 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-sm">
+                <h3 class="font-bold text-blue-300 text-base">🎯 Capaian Pembelajaran (CP)</h3>
+                <p>Peserta didik mengidentifikasi dan menjelaskan bagian tubuh manusia, fungsinya, serta keterkaitannya dengan cara menjaga kesehatan, termasuk sistem pencernaan dan dampaknya pada tubuh.</p>
+                <ul class="list-disc pl-4 space-y-1.5 text-xs text-slate-300">
+                    <li>Mengidentifikasi organ-organ penyusun sistem pencernaan manusia dengan tepat.</li>
+                    <li>Menjelaskan fungsi masing-masing organ pencernaan manusia dengan benar.</li>
+                    <li>Menganalisis proses pencernaan dari mulut hingga pembuangan dengan urut dan logis.</li>
+                </ul>
+            </div>
+
+            <!-- Player Info Input Section -->
+            <div class="space-y-2 pt-1">
+                <label class="text-xs font-bold text-sky-200 uppercase tracking-wider">Identitas Pemain:</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <input type="text" id="playerNameInput" placeholder="Nama Lengkap Siswa" class="w-full py-2.5 px-3 rounded-xl text-xs bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400">
+                    <input type="text" id="playerClassInput" placeholder="Kelas / Absen" class="w-full py-2.5 px-3 rounded-xl text-xs bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400">
+                </div>
+            </div>
+
+            <!-- Difficulty Selector -->
+            <div class="space-y-2 pt-2">
+                <label class="text-xs font-bold text-sky-200 uppercase tracking-wider">Pilih Tingkat Kesulitan:</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="setDifficulty('easy')" id="diffEasy" class="py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition">Easy (Santai)</button>
+                    <button onclick="setDifficulty('medium')" id="diffMed" class="py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition">Medium (Normal)</button>
+                    <button onclick="setDifficulty('hard')" id="diffHard" class="py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition">Hard (Tantangan)</button>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="startGameSession()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/30 transition transform active:scale-95 text-center text-base">
+            🚀 Mulai Misi Sekarang!
+        </button>
+    </div>
+
+
+    <!-- 3. HALAMAN UTAMA PERMAINAN (GAMEPLAY) -->
+    <div id="gameScreen" class="screen justify-between p-0">
+        <!-- HUD Top Bar -->
+        <div class="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-4 bg-white/85 backdrop-blur-md border-b border-sky-100 text-xs sm:text-sm shadow-sm">
+            <div class="flex items-center space-x-3">
+                <div class="bg-sky-50 px-3 py-1 rounded-xl border border-sky-200 flex items-center space-x-1 shadow-sm">
+                    <span>❤️</span> <span id="hudLives" class="font-bold text-rose-500">3</span>
+                </div>
+                <div class="bg-sky-50 px-3 py-1 rounded-xl border border-sky-200 flex items-center space-x-1 shadow-sm">
+                    <span>⭐</span> <span id="hudScore" class="font-bold text-amber-500">0</span>
+                </div>
+            </div>
+
+            <div class="bg-sky-50 px-3 py-1 rounded-xl border border-sky-200 flex items-center space-x-1 shadow-sm">
+                <span>⏱️</span> <span id="hudTimer" class="font-bold text-sky-600">120s</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="pauseGame()" class="w-9 h-9 bg-sky-50 hover:bg-sky-100 rounded-xl border border-sky-200 flex items-center justify-center text-base shadow-sm">⏸️</button>
+            </div>
+        </div>
+
+        <!-- Canvas Game Area -->
+        <div class="relative w-full flex-1 overflow-hidden">
+            <canvas id="gameCanvas"></canvas>
             
-            // MEDIUM
-            { q: "Gerakan meremas-remas pada kerongkongan agar makanan masuk ke lambung disebut...", opts: ["Gerak Refleks", "Gerak Mekanik", "Gerak Peristaltik", "Gerak Kimiawi"], ans: 2, diff: "medium", exp: "Gerak Peristaltik adalah otot kerongkongan berkontraksi mendorong makanan ke lambung." },
-            { q: "Di manakah tempat utama penyerapan sari-sari makanan?", opts: ["Lambung", "Usus Besar", "Mulut", "Usus Halus"], ans: 3, diff: "medium", exp: "Usus halus menyerap sari-sari makanan dan mengedarkannya ke seluruh tubuh melalui darah." },
-            { q: "Fungsi utama usus besar adalah...", opts: ["Menghasilkan enzim", "Menyerap air dari sisa makanan", "Menyerap sari makanan", "Mencerna protein"], ans: 1, diff: "medium", exp: "Usus besar mengatur kadar air pada sisa makanan dan membusukkan makanan dengan bantuan bakteri E.coli." },
-            { q: "Enzim yang terdapat di dalam mulut untuk mengubah zat tepung menjadi gula adalah...", opts: ["Amilase (Ptyalin)", "Pepsin", "Renin", "Lipase"], ans: 0, diff: "medium", exp: "Enzim amilase di air liur memecah karbohidrat (zat tepung) agar rasanya manis dan mudah dicerna." },
-            { q: "Kelenjar pencernaan terbesar di dalam tubuh manusia yang menghasilkan empedu adalah...", opts: ["Pankreas", "Lambung", "Hati", "Ginjal"], ans: 2, diff: "medium", exp: "Hati menghasilkan cairan empedu yang berfungsi untuk memecah lemak dalam pencernaan." },
-            { q: "Bagian usus halus yang berbatasan langsung dengan lambung adalah...", opts: ["Usus Kosong (Jejunum)", "Usus Penyerapan (Ileum)", "Usus Dua Belas Jari (Duodenum)", "Usus Buntu"], ans: 2, diff: "medium", exp: "Usus dua belas jari (Duodenum) adalah pintu masuk makanan setelah dari lambung ke usus halus." },
-            { q: "Gigi yang berfungsi untuk mengoyak dan merobek makanan adalah...", opts: ["Gigi Seri", "Gigi Taring", "Gigi Geraham Depan", "Gigi Geraham Belakang"], ans: 1, diff: "medium", exp: "Gigi taring memiliki ujung yang runcing, khusus untuk mengoyak makanan seperti daging." },
-            { q: "Pencernaan secara kimiawi dengan bantuan enzim pertama kali terjadi di...", opts: ["Mulut", "Kerongkongan", "Lambung", "Usus Halus"], ans: 0, diff: "medium", exp: "Di mulut terdapat enzim amilase (ptyalin) yang memulai pencernaan kimiawi." },
+            <!-- Direct Visual Feedback Overlay -->
+            <div id="visualFeedback" class="absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0 border-4 border-transparent"></div>
+        </div>
+    </div>
 
-            // HARD
-            { q: "Asam Klorida (HCl) di dalam lambung berfungsi untuk...", opts: ["Menyerap lemak", "Membunuh kuman penyakit", "Membusukkan makanan", "Menyerap vitamin"], ans: 1, diff: "hard", exp: "HCl (Asam lambung) berfungsi membunuh bakteri yang masuk bersama makanan dan mengaktifkan pepsinogen." },
-            { q: "Enzim Pepsin pada lambung bertugas untuk memecah...", opts: ["Lemak menjadi asam lemak", "Karbohidrat menjadi glukosa", "Protein menjadi pepton", "Susu menjadi kasein"], ans: 2, diff: "hard", exp: "Pepsin adalah enzim pencerna protein dalam lambung, mengubah protein menjadi molekul lebih kecil (pepton)." },
-            { q: "Penyakit peradangan pada lambung yang sering disebabkan pola makan tidak teratur disebut...", opts: ["Diare", "Tifus", "Maag", "Sembelit"], ans: 2, diff: "hard", exp: "Maag adalah iritasi pada dinding lambung karena asam lambung tinggi akibat pola makan tidak teratur." },
-            { q: "Untuk menjaga organ pencernaan agar tidak sembelit (susah BAB), kita sebaiknya banyak mengonsumsi...", opts: ["Daging berlemak", "Makanan berserat (Sayur/Buah)", "Minuman bersoda", "Makanan manis"], ans: 1, diff: "hard", exp: "Serat membantu memadatkan feses dan memperlancar gerakan peristaltik di usus besar." },
-            { q: "Enzim Lipase yang dihasilkan oleh pankreas berfungsi untuk memecah...", opts: ["Karbohidrat", "Protein", "Lemak", "Vitamin"], ans: 2, diff: "hard", exp: "Lipase berfungsi memecah lemak (lipid) menjadi asam lemak dan gliserol agar mudah diserap." },
-            { q: "Bakteri baik (Escherichia coli) dalam usus besar membantu pembusukan sisa makanan sekaligus menghasilkan...", opts: ["Vitamin C", "Vitamin K", "Protein", "Kalsium"], ans: 1, diff: "hard", exp: "Bakteri E. coli di usus besar tidak hanya membusukkan makanan tetapi juga mensintesis Vitamin K." },
-            { q: "Gangguan pencernaan dimana feses menjadi sangat cair karena infeksi bakteri pada usus disebut...", opts: ["Sembelit", "Diare", "Maag", "Apendisitis"], ans: 1, diff: "hard", exp: "Diare membuat usus besar tidak menyerap air dengan baik sehingga feses menjadi encer/cair." },
-            { q: "Cairan empedu yang dihasilkan hati ditampung di kantung empedu sebelum disalurkan ke...", opts: ["Lambung", "Usus Besar", "Usus Halus (Duodenum)", "Kerongkongan"], ans: 2, diff: "hard", exp: "Cairan empedu dialirkan ke usus dua belas jari (duodenum) untuk membantu pencernaan lemak." }
-        ];
 
-        // --- 2. GAME STATE & VARIABLES ---
-        let currentScreen = 'splash-screen';
-        let difficulty = 'easy'; // easy, medium, hard
-        let score = 0;
-        let lives = 3;
-        let timeLeft = 120;
-        let timerInterval = null;
-        
-        let isPlaying = false;
-        let isPaused = false;
-        let isQuizMode = false;
+    <!-- 4. MODAL KUIS INTERAKTIF DENGAN ILUSTRASI ANIMASI -->
+    <div id="quizModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white border border-sky-100 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4 animate-scaleUp">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <span id="quizBadge" class="bg-sky-100 text-sky-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Kuis Pencernaan</span>
+                <span id="quizTimer" class="text-xs font-bold text-amber-500">Waktu: 30s</span>
+            </div>
+            
+            <!-- Animated SVG Illustration Container -->
+            <div id="quizIllustration" class="w-full h-36 bg-gradient-to-br from-sky-50 to-blue-50 rounded-2xl border border-sky-100 flex items-center justify-center p-2">
+                <!-- Dynamic SVG injected here -->
+            </div>
 
-        let activeQuestions = [];
-        let currentQuestionIndex = 0;
-        let evaluationHistory = [];
+            <h3 id="quizQuestion" class="text-base sm:text-lg font-bold text-slate-800">Pertanyaan akan muncul di sini...</h3>
+            
+            <div id="quizOptions" class="space-y-2.5">
+                <!-- Dynamic Options -->
+            </div>
 
-        // Canvas entities
-        const canvas = document.getElementById('game-canvas');
-        const ctx = canvas.getContext('2d');
-        let width = 0, height = 0;
-        
-        let mouseX = 0;
-        
-        let arrows = [];
-        let balloons = [];
-        let particles = [];
+            <div id="quizExplanation" class="hidden bg-sky-50 p-3 rounded-2xl border border-sky-200 text-xs text-slate-700 space-y-1">
+                <p class="font-bold text-sky-700">💡 Pembahasan:</p>
+                <p id="explanationText"></p>
+                <button onclick="closeQuizModal()" class="mt-2 w-full py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-xs transition shadow-md">Lanjutkan Misi ➔</button>
+            </div>
+        </div>
+    </div>
 
-        // Settings based on difficulty (Waktu diatur jadi 120 detik semua untuk mode Time Attack)
-        const settings = {
-            easy:   { balSpeedX: 1.5, balSpeedY: 0, balSpawnRate: 1500, time: 120 },
-            medium: { balSpeedX: 2.5, balSpeedY: 0.8, balSpawnRate: 1000, time: 120 },
-            hard:   { balSpeedX: 3.5, balSpeedY: 1.5, balSpawnRate: 700, time: 120 }
-        };
 
-        // --- 3. AUDIO & MUSIC PLAYER (SYNTHESIZED CHEERFUL INSTRUMENT BGM) ---
-        let audioCtx = null;
-        let audioEnabled = true;
+    <!-- 5. PAUSE MODAL -->
+    <div id="pauseModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white border border-sky-100 rounded-3xl w-full max-w-sm p-6 text-center space-y-4 shadow-2xl">
+            <h3 class="text-xl font-bold text-sky-800">Game Dijeda</h3>
+            <p class="text-xs text-slate-600">Ambil napas sejenak di bawah langit cerah sebelum melanjutkan misi.</p>
+            <div class="space-y-2 pt-2">
+                <button onclick="resumeGame()" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-md text-sm transition">Lanjutkan Permainan</button>
+                <button onclick="quitToMenu()" class="w-full py-3 bg-sky-50 hover:bg-sky-100 text-rose-500 font-semibold rounded-xl text-sm transition border border-sky-200">Keluar ke Menu Utama</button>
+            </div>
+        </div>
+    </div>
 
-        // Synth Melodi Instrumen Ceria menggunakan Web Audio API
-        const BGMPlayer = {
-            isPlaying: false,
-            timer: null,
-            noteIndex: 0,
-            // Tangga nada C Mayor ceria (C4, D4, E4, F4, G4, A4, B4, C5)
-            notes: [
-                523.25, 659.25, 783.99, 659.25, 523.25, 659.25, 783.99, 880.00,
-                783.99, 659.25, 523.25, 440.00, 392.00, 440.00, 523.25, 659.25,
-                523.25, 523.25, 659.25, 783.99, 1046.50, 880.00, 783.99, 659.25,
-                523.25, 659.25, 783.99, 659.25, 523.25, 392.00, 523.25, 523.25
-            ],
-            bassNotes: [
-                261.63, 261.63, 349.23, 349.23, 392.00, 392.00, 261.63, 261.63,
-                261.63, 261.63, 349.23, 349.23, 392.00, 392.00, 261.63, 261.63
-            ],
-            playTone: function(freq, type, duration, volume) {
-                if (!audioCtx || !audioEnabled) return;
-                try {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                    
-                    gain.gain.setValueAtTime(volume, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
 
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
+    <!-- 6. HALAMAN HASIL (VICTORY / GAME OVER) -->
+    <div id="resultScreen" class="screen justify-between p-6 sm:p-8">
+        <div class="text-center space-y-2 pt-4">
+            <div id="resultEmoji" class="text-6xl animate-bounce">🏆</div>
+            <h2 id="resultTitle" class="text-2xl sm:text-3xl font-extrabold text-sky-800">Misi Selesai!</h2>
+            <p id="resultSubtitle" class="text-xs text-slate-600">Kerja bagus, penjelajah cilik!</p>
+        </div>
 
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + duration);
-                } catch(e) {}
-            },
-            tick: function() {
-                if (!this.isPlaying || !audioEnabled) return;
-                
-                // Melodi Utama (Instrumen Suara Marimba/Triangle)
-                const freq = this.notes[this.noteIndex % this.notes.length];
-                this.playTone(freq, 'triangle', 0.25, 0.15);
+        <div class="bg-sky-50/80 border border-sky-200 rounded-3xl p-5 my-4 space-y-4 shadow-sm">
+            <div class="flex justify-center space-x-2 text-3xl" id="starContainer">
+                ⭐ ⭐ ⭐
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 text-center">
+                <div class="bg-white p-3 rounded-2xl border border-sky-100 shadow-sm">
+                    <p class="text-xs text-slate-500">Skor Akhir</p>
+                    <p id="finalScore" class="text-2xl font-extrabold text-amber-500 mt-1">0</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-sky-100 shadow-sm">
+                    <p class="text-xs text-slate-500">Kuis Terjawab</p>
+                    <p id="finalCorrect" class="text-2xl font-extrabold text-emerald-500 mt-1">0/0</p>
+                </div>
+            </div>
 
-                // Bass (Setiap 2 ketukan)
-                if (this.noteIndex % 2 === 0) {
-                    const bassFreq = this.bassNotes[Math.floor(this.noteIndex / 2) % this.bassNotes.length];
-                    this.playTone(bassFreq, 'sine', 0.4, 0.1);
-                }
+            <!-- Spreadsheet Sync Status Box -->
+            <div id="sheetStatusBox" class="bg-white p-3 rounded-2xl border border-sky-100 text-center text-xs text-slate-600 shadow-sm">
+                <p id="sheetStatusText">📤 Menyimpan data ke Google Spreadsheet...</p>
+            </div>
 
-                this.noteIndex++;
-            },
-            start: function() {
-                if (this.isPlaying) return;
-                this.isPlaying = true;
-                this.noteIndex = 0;
-                // Mainkan tempo ceria (sekitar 220ms per ketukan)
-                this.timer = setInterval(() => this.tick(), 220);
-            },
-            stop: function() {
-                this.isPlaying = false;
-                if (this.timer) {
-                    clearInterval(this.timer);
-                    this.timer = null;
-                }
-            },
-            reset: function() {
-                this.stop();
-                this.noteIndex = 0;
+            <div class="bg-white p-3 rounded-2xl border border-sky-100 max-h-32 overflow-y-auto custom-scrollbar text-xs space-y-2 shadow-sm" id="evaluationList">
+                <!-- Evaluation summary items -->
+            </div>
+        </div>
+
+        <div class="space-y-3 w-full pb-2">
+            <button onclick="restartGame()" class="w-full py-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-500/30 transition text-sm">
+                🔄 Main Lagi
+            </button>
+            <button onclick="goToScreen('splashScreen')" class="w-full py-3 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded-2xl border border-sky-200 transition text-sm">
+                🏠 Keluar ke Menu Utama
+            </button>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- GOOGLE SPREADSHEET CONFIGURATION ---
+        const GOOGLE_SHEET_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT";
+
+        function sendDataToGoogleSheet(data) {
+            const statusText = document.getElementById('sheetStatusText');
+            if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+                statusText.textContent = "ℹ️ Google Spreadsheet belum dikonfigurasi.";
+                return;
             }
-        };
+
+            statusText.textContent = "📤 Mengirim data ke Google Spreadsheet...";
+
+            fetch(GOOGLE_SHEET_WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                statusText.textContent = "✅ Data berhasil tersimpan di Google Spreadsheet!";
+                statusText.className = "text-emerald-600 font-bold";
+            })
+            .catch((error) => {
+                console.error("Error saving to sheet:", error);
+                statusText.textContent = "⚠️ Gagal menyimpan ke Spreadsheet (Cek koneksi).";
+                statusText.className = "text-rose-500 font-semibold";
+            });
+        }
+
+        // --- AUDIO ENGINE ---
+        let audioCtx = null;
+        let soundEnabled = true;
+        let bgmInterval = null;
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const btnText = document.getElementById('musicToggleText');
+            if (soundEnabled) {
+                if (btnText) btnText.textContent = "🔊 Musik On";
+                startBGM();
+            } else {
+                if (btnText) btnText.textContent = "🔇 Musik Off";
+                stopBGM();
+            }
+        }
 
         function initAudio() {
             if (!audioCtx) {
@@ -439,591 +401,1128 @@
             }
         }
 
-        function toggleAudio() {
-            initAudio();
-            audioEnabled = !audioEnabled;
-            
-            // Update ikon di dalam Game (HUD)
-            let iconOn = document.getElementById('icon-sound-on');
-            let iconOff = document.getElementById('icon-sound-off');
-            if(iconOn) iconOn.classList.toggle('hidden', !audioEnabled);
-            if(iconOff) iconOff.classList.toggle('hidden', audioEnabled);
-
-            // Update text/ikon di Menu Utama
-            let menuText = document.getElementById('menu-music-text');
-            if(menuText) {
-                menuText.innerText = audioEnabled ? '🔊 Musik: ON' : '🔇 Musik: OFF';
-            }
-            
-            if (audioEnabled) {
-                if(!isPaused) {
-                    BGMPlayer.start();
-                }
-            } else {
-                BGMPlayer.stop();
-            }
-        }
-
-        // SFX Generator (Tetap dipertahankan untuk efek tembak, letusan balon, & kuis)
         function playSound(type) {
-            if (!audioEnabled || !audioCtx) return;
-            
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            if (!soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
 
             const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
 
             if (type === 'click') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-                gainNode.gain.setValueAtTime(0.9, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.35, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
                 osc.start(now);
-                osc.stop(now + 0.1);
-            } 
-            else if (type === 'shoot') {
+                osc.stop(now + 0.08);
+            } else if (type === 'pop') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.linearRampToValueAtTime(150, now + 0.15);
-                gainNode.gain.setValueAtTime(0.8, now);
-                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(700, now + 0.12);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
                 osc.start(now);
-                osc.stop(now + 0.15);
-            }
-            else if (type === 'pop') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(900, now);
-                osc.frequency.exponentialRampToValueAtTime(200, now + 0.1);
-                gainNode.gain.setValueAtTime(0.9, now);
-                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            }
-            else if (type === 'correct') {
-                osc.type = 'triangle';
+                osc.stop(now + 0.12);
+            } else if (type === 'correct') {
+                osc.type = 'sine';
                 osc.frequency.setValueAtTime(523.25, now);
                 osc.frequency.setValueAtTime(659.25, now + 0.1);
                 osc.frequency.setValueAtTime(783.99, now + 0.2);
-                osc.frequency.setValueAtTime(1046.50, now + 0.3);
-                gainNode.gain.setValueAtTime(0.8, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 0.5);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
                 osc.start(now);
-                osc.stop(now + 0.5);
-            }
-            else if (type === 'wrong') {
+                osc.stop(now + 0.35);
+            } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.linearRampToValueAtTime(100, now + 0.4);
-                gainNode.gain.setValueAtTime(0.8, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
-                osc.start(now);
-                osc.stop(now + 0.4);
-            }
-            else if (type === 'gameover') {
-                osc.type = 'square';
                 osc.frequency.setValueAtTime(200, now);
-                osc.frequency.linearRampToValueAtTime(50, now + 1.0);
-                gainNode.gain.setValueAtTime(0.8, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 1.2);
+                osc.frequency.linearRampToValueAtTime(120, now + 0.25);
+                gain.gain.setValueAtTime(0.45, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
                 osc.start(now);
-                osc.stop(now + 1.2);
-            }
-            else if (type === 'victory') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.setValueAtTime(500, now + 0.2);
-                osc.frequency.setValueAtTime(600, now + 0.4);
-                osc.frequency.setValueAtTime(800, now + 0.6);
-                gainNode.gain.setValueAtTime(0.9, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
-                osc.start(now);
-                osc.stop(now + 1.5);
-            }
-        }
-
-
-        // --- 4. NAVIGATION & SETUP ---
-        function navTo(screenId) {
-            playSound('click');
-            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            currentScreen = screenId;
-
-            // Pastikan musik kembali berputar saat kembali ke menu utama jika setting ON
-            if ((screenId === 'splash-screen' || screenId === 'info-screen') && audioEnabled) {
-                BGMPlayer.start();
-            }
-        }
-
-        // Fix click anywhere on document to init audio
-        const initInteraction = () => {
-            if(!audioCtx) initAudio();
-            // Otomatis mainkan musik di layar pembuka saat layar pertama kali disentuh/diklik
-            if(audioEnabled && !BGMPlayer.isPlaying && (currentScreen === 'splash-screen' || currentScreen === 'info-screen')) {
-                BGMPlayer.start();
-            }
-        };
-        document.body.addEventListener('click', initInteraction, {once: true});
-        document.body.addEventListener('touchstart', initInteraction, {once: true});
-
-        function startGame(diff) {
-            initAudio();
-            playSound('click');
-            difficulty = diff;
-            
-            // Prepare Questions
-            let pool = questionBank.filter(q => q.diff === difficulty);
-            // If not enough questions for diff, fallback to mix
-            if(pool.length < 4) {
-                 pool = [...questionBank].sort(() => 0.5 - Math.random());
-            } else {
-                 pool.sort(() => 0.5 - Math.random()); // Shuffle
-            }
-            
-            activeQuestions = pool; 
-            currentQuestionIndex = 0;
-            evaluationHistory = [];
-
-            // Reset Game Variables
-            score = 0;
-            lives = 3;
-            timeLeft = settings[difficulty].time;
-            isPaused = false;
-            isQuizMode = false;
-            isPlaying = true;
-            
-            arrows = [];
-            balloons = [];
-            particles = [];
-
-            updateHUD();
-            navTo('game-screen');
-            
-            if (audioEnabled) {
-                BGMPlayer.start();
-            }
-            
-            resizeCanvas();
-            mouseX = width / 2; // initial bow position
-
-            if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if(isPlaying && !isPaused) { 
-                    timeLeft--;
-                    updateHUD();
-                    if(timeLeft <= 0) endGame(true); // Waktu habis dianggap selesai bermain (Victory Time Attack)
-                }
-            }, 1000);
-
-            lastTime = performance.now();
-            lastBalloonSpawn = lastTime;
-            requestAnimationFrame(gameLoop);
-        }
-
-        function updateHUD() {
-            document.getElementById('hud-score').innerText = score;
-            document.getElementById('hud-timer').innerText = timeLeft + "s";
-            
-            // Hearts
-            let heartsHTML = '';
-            for(let i=0; i<3; i++) {
-                if(i < lives) {
-                    heartsHTML += `<svg class="w-8 h-8 text-red-500 drop-shadow-md" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path></svg>`;
-                } else {
-                    heartsHTML += `<svg class="w-8 h-8 text-slate-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>`;
-                }
-            }
-            document.getElementById('hud-lives').innerHTML = heartsHTML;
-        }
-
-        function togglePause() {
-            playSound('click');
-            if(!isPlaying || isQuizMode) return;
-            isPaused = !isPaused;
-            document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
-            
-            if (isPaused) {
-                BGMPlayer.stop();
-            } else if (audioEnabled) {
-                BGMPlayer.start();
-            }
-
-            if(!isPaused) {
-                lastTime = performance.now();
-                requestAnimationFrame(gameLoop);
-            }
-        }
-
-        // --- 5. CANVAS RENDER & ENGINE ---
-        window.addEventListener('resize', resizeCanvas);
-        function resizeCanvas() {
-            const container = document.getElementById('game-screen');
-            width = container.clientWidth;
-            height = container.clientHeight;
-            canvas.width = width;
-            canvas.height = height;
-        }
-
-        // Inputs
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            mouseX = e.clientX - rect.left;
-        });
-        canvas.addEventListener('touchmove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            mouseX = e.touches[0].clientX - rect.left;
-        }, {passive: true});
-
-        canvas.addEventListener('mousedown', shootArrow);
-        canvas.addEventListener('touchstart', (e) => {
-             const rect = canvas.getBoundingClientRect();
-             mouseX = e.touches[0].clientX - rect.left;
-             shootArrow();
-        }, {passive: true});
-
-        function shootArrow() {
-            if(!isPlaying || isPaused || isQuizMode) return;
-            playSound('shoot');
-            arrows.push({
-                x: mouseX,
-                y: height - 100, // Menyesuaikan ukuran busur yang lebih besar
-                width: 6,
-                height: 40,
-                speed: 12 // Panah melesat lebih cepat di layar besar
-            });
-        }
-
-        function spawnBalloon() {
-            const colors = ['#f43f5e', '#a855f7', '#3b82f6', '#10b981', '#f59e0b'];
-            const size = 35 + Math.random() * 20; // Balon lebih besar untuk resolusi tinggi
-            const isLeftToRight = Math.random() > 0.5;
-            
-            balloons.push({
-                x: isLeftToRight ? -size : width + size,
-                y: 100 + Math.random() * (height / 2 - 100),
-                radius: size,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                speedX: (isLeftToRight ? 1 : -1) * (settings[difficulty].balSpeedX + Math.random()),
-                speedY: Math.sin(Math.random()*Math.PI) * settings[difficulty].balSpeedY,
-                phase: Math.random() * Math.PI * 2
-            });
-        }
-
-        function createParticles(x, y, color) {
-            for(let i=0; i<25; i++) {
-                particles.push({
-                    x: x, y: y,
-                    vx: (Math.random() - 0.5) * 10,
-                    vy: (Math.random() - 0.5) * 10,
-                    life: 1.0,
-                    color: color
+                osc.stop(now + 0.25);
+            } else if (type === 'win') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.type = 'sine';
+                    o.frequency.setValueAtTime(freq, now + idx * 0.12);
+                    g.gain.setValueAtTime(0.45, now + idx * 0.12);
+                    g.gain.linearRampToValueAtTime(0.01, now + idx * 0.12 + 0.2);
+                    o.start(now + idx * 0.12);
+                    o.stop(now + idx * 0.12 + 0.2);
                 });
             }
         }
 
-        let lastTime = 0;
-        let lastBalloonSpawn = 0;
+        function startBGM() {
+            if (bgmInterval || !soundEnabled) return;
+            initAudio();
+            const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 440.00, 493.88];
+            let noteIdx = 0;
 
-        function gameLoop(timestamp) {
-            if(!isPlaying || isPaused || isQuizMode) return;
+            bgmInterval = setInterval(() => {
+                if (!soundEnabled || !audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(melody[noteIdx], now);
+                    gain.gain.setValueAtTime(0.28, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+
+                    noteIdx = (noteIdx + 1) % melody.length;
+                } catch(e) {}
+            }, 350);
+        }
+
+        function stopBGM() {
+            if (bgmInterval) {
+                clearInterval(bgmInterval);
+                bgmInterval = null;
+            }
+        }
+
+        // --- DIFFICULTY CONFIGURATION ---
+        let difficulty = 'easy';
+        let playerName = 'Penjelajah Cilik';
+        let playerClass = 'Kelas 5';
+        const diffConfig = {
+            easy: { timer: 120, spawnRate: 90, maxBalloons: 4, speedMultiplier: 1.0 },
+            medium: { timer: 120, spawnRate: 70, maxBalloons: 6, speedMultiplier: 1.3 },
+            hard: { timer: 120, spawnRate: 50, maxBalloons: 8, speedMultiplier: 1.6 }
+        };
+
+        function setDifficulty(level) {
+            difficulty = level;
+            playSound('click');
+            document.getElementById('diffEasy').className = level === 'easy' 
+                ? "py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition"
+                : "py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition";
+            document.getElementById('diffMed').className = level === 'medium' 
+                ? "py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition"
+                : "py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition";
+            document.getElementById('diffHard').className = level === 'hard' 
+                ? "py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition"
+                : "py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition";
+        }
+
+        // --- NAVIGASI LAYAR ---
+        function goToScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
             
-            const dt = timestamp - lastTime;
-            lastTime = timestamp;
+            if (soundEnabled && !bgmInterval) {
+                startBGM();
+            }
 
-            // Spawn Balloons
-            if(timestamp - lastBalloonSpawn > settings[difficulty].balSpawnRate) {
+            if(screenId === 'gameScreen') {
+                initCanvasSize();
+                startCanvasGame();
+            } else {
+                stopCanvasGame();
+            }
+        }
+
+        function startGameSession() {
+            const nameInput = document.getElementById('playerNameInput');
+            const classInput = document.getElementById('playerClassInput');
+            if (nameInput && nameInput.value.trim() !== '') playerName = nameInput.value.trim();
+            if (classInput && classInput.value.trim() !== '') playerClass = classInput.value.trim();
+
+            score = 0;
+            lives = 3;
+            questionsAnsweredCount = 0;
+            correctAnswersCount = 0;
+            evaluationLog = [];
+            balloons = [];
+            projectiles = [];
+            timeLeft = diffConfig[difficulty].timer;
+
+            goToScreen('gameScreen');
+            updateHUD();
+
+            if (window.timerInterval) clearInterval(window.timerInterval);
+            window.timerInterval = setInterval(() => {
+                if (gameRunning && !gamePaused) {
+                    timeLeft--;
+                    updateHUD();
+                    if (timeLeft <= 0) {
+                        endGame(true);
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateHUD() {
+            document.getElementById('hudLives').textContent = lives;
+            document.getElementById('hudScore').textContent = score;
+            document.getElementById('hudTimer').textContent = timeLeft + 's';
+        }
+
+        function pauseGame() {
+            gamePaused = true;
+            document.getElementById('pauseModal').classList.remove('hidden');
+            document.getElementById('pauseModal').classList.add('flex');
+            playSound('click');
+        }
+
+        function resumeGame() {
+            gamePaused = false;
+            document.getElementById('pauseModal').classList.remove('flex');
+            document.getElementById('pauseModal').classList.add('hidden');
+            playSound('click');
+        }
+
+        function quitToMenu() {
+            gamePaused = false;
+            stopCanvasGame();
+            document.getElementById('pauseModal').classList.add('hidden');
+            goToScreen('splashScreen');
+        }
+
+        // --- TABS SWITCHER ---
+        function switchTab(tabName) {
+            playSound('click');
+            const guideTab = document.getElementById('tabGuide');
+            const tpTab = document.getElementById('tabTP');
+            const guideBtn = document.getElementById('tabBtnGuide');
+            const tpBtn = document.getElementById('tabBtnTP');
+
+            if (tabName === 'guide') {
+                guideTab.classList.remove('hidden');
+                tpTab.classList.add('hidden');
+                guideBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition";
+                tpBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition";
+            } else {
+                guideTab.classList.add('hidden');
+                tpTab.classList.remove('hidden');
+                tpBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition";
+                guideBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition";
+            }
+        }
+
+        function openInstructionsTab() {
+            switchTab('guide');
+        }
+
+        // --- COMPREHENSIVE QUIZ BANK (60 QUESTIONS: 20 EASY, 20 MEDIUM, 20 HARD) ---
+        const quizBanks = {
+            easy: [
+                {
+                    topic: "Mulut",
+                    question: "Organ pertama yang bertugas menerima makanan masuk ke dalam tubuh manusia adalah...",
+                    options: ["Kerongkongan", "Mulut", "Lambung", "Usus Halus"],
+                    answer: 1,
+                    explanation: "Makanan pertama kali masuk melalui mulut, di mana proses pencernaan mekanik dan kimiawi dimulai.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="45" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><path d="M75 75 Q100 95 125 75" fill="none" stroke="#dc2626" stroke-width="4" stroke-linecap="round"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Organ Mulut</text></svg>`
+                },
+                {
+                    topic: "Gigi",
+                    question: "Alat pencernaan mekanik di dalam mulut yang berfungsi memotong dan menghaluskan makanan adalah...",
+                    options: ["Lidah", "Gigi", "Air liur", "Kerongkongan"],
+                    answer: 1,
+                    explanation: "Gigi memotong, merobek, dan mengunyah makanan secara mekanik agar berukuran lebih kecil.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="75" y="30" width="50" height="60" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Manusia</text></svg>`
+                },
+                {
+                    topic: "Lidah",
+                    question: "Selain membantu mengecap rasa, lidah di dalam mulut berfungsi untuk...",
+                    options: ["Menelan dan mendorong makanan", "Memompa darah", "Menghasilkan asam lambung", "Menyaring udara"],
+                    answer: 0,
+                    explanation: "Lidah membantu mengatur letak makanan saat dikunyah serta mendorong makanan masuk ke kerongkongan.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M70 60 Q100 20 130 60 Q130 90 100 90 Q70 90 70 60 Z" fill="#f43f5e" stroke="#be123c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#be123c">Fungsi Lidah</text></svg>`
+                },
+                {
+                    topic: "Kerongkongan",
+                    question: "Saluran berbentuk pipa yang menghubungkan mulut dengan lambung disebut...",
+                    options: ["Tenggorokan", "Kerongkongan", "Usus", "Pankreas"],
+                    answer: 1,
+                    explanation: "Kerongkongan (esofagus) adalah saluran khusus makanan menuju lambung.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="85" y="15" width="30" height="90" rx="15" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#9a3412">Kerongkongan</text></svg>`
+                },
+                {
+                    topic: "Lambung",
+                    question: "Organ pencernaan berbentuk seperti kantung yang terletak di dalam rongga perut sebelah kiri atas adalah...",
+                    options: ["Hati", "Lambung", "Usus Besar", "Anus"],
+                    answer: 1,
+                    explanation: "Lambung berfungsi menampung dan mencerna makanan secara kimiawi dengan getah lambung.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 C140 70 145 40 120 30 Z" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Lambung</text></svg>`
+                },
+                {
+                    topic: "Usus Halus",
+                    question: "Tempat utama terjadinya penyerapan sari-sari makanan ke dalam tubuh adalah...",
+                    options: ["Usus Halus", "Usus Besar", "Lambung", "Kerongkongan"],
+                    answer: 0,
+                    explanation: "Usus halus menyerap nutrisi makanan agar dapat diedarkan oleh darah ke seluruh tubuh.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 40 Q75 10 100 40 T150 40 T100 80 T50 40" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Usus Halus</text></svg>`
+                },
+                {
+                    topic: "Usus Besar",
+                    question: "Sisa pencernaan yang sudah tidak diserap nutrisinya akan masuk ke...",
+                    options: ["Usus Besar", "Lambung", "Hati", "Jantung"],
+                    answer: 0,
+                    explanation: "Usus besar menerima sisa makanan dari usus halus untuk diserap kadar airnya.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="25" width="80" height="70" rx="15" fill="none" stroke="#10b981" stroke-width="14"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Usus Besar</text></svg>`
+                },
+                {
+                    topic: "Anus",
+                    question: "Lubang tempat pembuangan akhir sisa pencernaan (feses) keluar dari tubuh dinamakan...",
+                    options: ["Anus", "Rektum", "Uretra", "Mulut"],
+                    answer: 0,
+                    explanation: "Anus adalah pintu keluar akhir tempat feses dikeluarkan dari tubuh.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="55" r="28" fill="#cbd5e1" stroke="#475569" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#334155">Anus</text></svg>`
+                },
+                {
+                    topic: "Hati",
+                    question: "Kelenjar terbesar di dalam tubuh manusia yang menghasilkan cairan empedu adalah...",
+                    options: ["Hati", "Pankreas", "Lambung", "Usus"],
+                    answer: 0,
+                    explanation: "Hati menghasilkan cairan empedu yang berperan penting dalam pencernaan lemak.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M45 45 C50 20 120 20 150 45 C170 65 140 95 90 90 Z" fill="#fb7185" stroke="#e11d48" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#be123c">Hati</text></svg>`
+                },
+                {
+                    topic: "Air Liur",
+                    question: "Cairan yang dihasilkan di dalam mulut untuk melembapkan makanan disebut...",
+                    options: ["Air liur (Saliva)", "Asam klorida", "Empedu", "Urin"],
+                    answer: 0,
+                    explanation: "Air liur mengandung enzim ptialin yang melembutkan makanan dan memulai pencernaan karbohidrat.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="30" fill="#bae6fd" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Air Liur / Saliva</text></svg>`
+                },
+                {
+                    topic: "Pencernaan",
+                    question: "Proses memecah makanan dari ukuran besar menjadi lebih kecil dan halus disebut...",
+                    options: ["Pencernaan makanan", "Pernapasan", "Peredaran darah", "Ekskresi"],
+                    answer: 0,
+                    explanation: "Sistem pencernaan mengubah makanan kompleks menjadi zat sederhana yang siap diserap tubuh.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="65" y="35" width="70" height="50" rx="10" fill="#fde047" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Proses Pencernaan</text></svg>`
+                },
+                {
+                    topic: "Kesehatan",
+                    question: "Agar organ pencernaan tetap sehat, kita sebaiknya makan makanan yang...",
+                    options: ["Bersih dan bergizi seimbang", "Mentah dan kotor", "Terlalu pedas setiap hari", "Mengandung bahan pengawet kimia"],
+                    answer: 0,
+                    explanation: "Makanan bersih dan bergizi seimbang menjaga kesehatan seluruh saluran pencernaan kita.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="35" fill="#bbf7d0" stroke="#16a34a" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Makanan Sehat</text></svg>`
+                },
+                {
+                    topic: "Air Putih",
+                    question: "Minum air putih yang cukup setiap hari sangat membantu kelancaran...",
+                    options: ["Pencernaan", "Pendengaran", "Penglihatan", "Penciuman"],
+                    answer: 0,
+                    explanation: "Air putih membantu melancarkan kerja usus besar dalam menyerap air dan mencegah sembelit.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="85" y="25" width="30" height="70" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Air Putih</text></svg>`
+                },
+                {
+                    topic: "Serat",
+                    question: "Buah-buahan dan sayuran sangat baik bagi pencernaan karena kaya akan kandungan...",
+                    options: ["Serat", "Plastik", "Minyak jelantah", "Besi baja"],
+                    answer: 0,
+                    explanation: "Serat makanan membantu melancarkan buang air besar dan mencegah sembelit.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#fed7aa" stroke="#ea580c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Buah & Sayur (Serat)</text></svg>`
+                },
+                {
+                    topic: "Sembelit",
+                    question: "Kesulitan buang air besar karena kurang makan berserat disebut...",
+                    options: ["Sembelit (Konstipasi)", "Diare", "Maag", "Tipes"],
+                    answer: 0,
+                    explanation: "Sembelit terjadi ketika feses terlalu keras akibat kurangnya asupan serat dan air.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Sembelit</text></svg>`
+                },
+                {
+                    topic: "Cuci Tangan",
+                    question: "Sebelum makan, kita diwajibkan untuk mencuci tangan menggunakan sabun agar...",
+                    options: ["Kuman penyakit tidak masuk ke dalam tubuh", "Tangan menjadi wangi bunga", "Makanan cepat habis", "Tangan menjadi licin"],
+                    answer: 0,
+                    explanation: "Mencuci tangan membunuh kuman dan bakteri agar tidak ikut tertelan saat makan.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Cuci Tangan Sabun</text></svg>`
+                },
+                {
+                    topic: "Mengunyah",
+                    question: "Mengunyah makanan secara perlahan dan lembut di mulut bertujuan agar...",
+                    options: ["Makanan lebih mudah dicerna oleh organ selanjutnya", "Makanan cepat basi", "Gigi cepat tanggal", "Perut terasa sakit"],
+                    answer: 0,
+                    explanation: "Makanan yang dikunyah halus meringankan kerja lambung dalam mencerna makanan.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="75" y="40" width="50" height="40" rx="8" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Mengunyah Halus</text></svg>`
+                },
+                {
+                    topic: "Lambung Sehat",
+                    question: "Kebiasaan terlambat makan dapat memicu gangguan kesehatan pada organ...",
+                    options: ["Lambung", "Jantung", "Paru-paru", "Ginjal"],
+                    answer: 0,
+                    explanation: "Terlambat makan membuat asam lambung melukai dinding lambung (penyakit maag).",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fecaca" stroke="#ef4444" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Kesehatan Lambung</text></svg>`
+                },
+                {
+                    topic: "Vitamin",
+                    question: "Zat gizi penting yang banyak terkandung dalam sayuran hijau dan buah segar adalah...",
+                    options: ["Vitamin dan Mineral", "Bensin", "Plastik", "Besi beton"],
+                    answer: 0,
+                    explanation: "Vitamin dan mineral menjaga fungsi organ tubuh dan sistem kekebalan tubuh.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#d9f99d" stroke="#65a30d" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#4d7c0f">Vitamin & Mineral</text></svg>`
+                },
+                {
+                    topic: "Gigi Sehat",
+                    question: "Agar gigi tetap kuat dan tidak berlubang, kita harus rajin...",
+                    options: ["Menggosok gigi secara teratur", "Makan permen setiap jam", "Membiarkan sisa makanan menempel", "Tidak pernah berkumur"],
+                    answer: 0,
+                    explanation: "Menggosok gigi membersihkan sisa makanan penyebab gigi berlubang.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="75" y="35" width="50" height="50" rx="8" fill="#ffffff" stroke="#0ea5e9" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0284c7">Gosok Gigi Rutin</text></svg>`
+                }
+            ],
+            medium: [
+                {
+                    topic: "Enzim Ptialin",
+                    question: "Enzim ptialin (amilase) yang dihasilkan di dalam mulut berfungsi untuk mengubah...",
+                    options: ["Karbohidrat (amilum) menjadi zat gula sederhana", "Lemak menjadi asam lemak", "Protein menjadi asam amino", "Vitamin menjadi mineral"],
+                    answer: 0,
+                    explanation: "Enzim ptialin melakukan pencernaan kimiawi pertama di mulut dengan mengubah amilum menjadi glukosa.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="38" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Enzim Ptialin / Amilase</text></svg>`
+                },
+                {
+                    topic: "Gerak Peristaltik",
+                    question: "Gerakan meremas dan mendorong makanan yang terjadi pada dinding kerongkongan disebut...",
+                    options: ["Gerak peristaltik", "Gerak lokomotor", "Gerak refleks", "Gerak rotasi"],
+                    answer: 0,
+                    explanation: "Otot kerongkongan berkontraksi secara bergelombang (peristaltik) untuk mendorong makanan ke lambung.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="85" y="15" width="30" height="90" rx="15" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><path d="M80 50 Q100 60 120 50" fill="none" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#9a3412">Gerak Peristaltik</text></svg>`
+                },
+                {
+                    topic: "Getah Lambung",
+                    question: "Getah lambung terdiri atas asam klorida (HCl) serta enzim...",
+                    options: ["Pepsin, renin, dan lipase", "Ptialin dan amilase", "Pankreatin dan tripsin", "Ptyalin dan maltase"],
+                    answer: 0,
+                    explanation: "Lambung menghasilkan HCl, pepsin (memecah protein), renin (menggumpalkan susu), dan lipase lambung.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Getah Lambung</text></svg>`
+                },
+                {
+                    topic: "Fungsi HCl",
+                    question: "Asam klorida (HCl) yang terdapat di dalam lambung memiliki fungsi utama untuk...",
+                    options: ["Membunuh kuman penyakit dan mengaktifkan pepsin", "Mencerna seluruh lemak", "Menyerap sari makanan", "Menghasilkan vitamin K"],
+                    answer: 0,
+                    explanation: "HCl membunuh bakteri patogen yang terbawa makanan dan menciptakan suasana asam untuk enzim pepsin.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="35" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Asam Klorida (HCl)</text></svg>`
+                },
+                {
+                    topic: "Bagian Usus Halus",
+                    question: "Usus halus manusia terdiri atas tiga bagian utama, yaitu...",
+                    options: ["Duodenum, jejunum, dan ileum", "Kolon, sekum, dan rektum", "Kardiak, fundus, dan pilorus", "Enamel, dentin, dan pulpa"],
+                    answer: 0,
+                    explanation: "Tiga bagian usus halus adalah usus 12 jari (duodenum), usus kosong (jejunum), dan usus penyerapan (ileum).",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 40 Q75 10 100 40 T150 40" fill="none" stroke="#38bdf8" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Duodenum, Jejunum, Ileum</text></svg>`
+                },
+                {
+                    topic: "Vili Usus Halus",
+                    question: "Permukaan dalam usus halus berlipat-lipat dan memiliki jonjot usus (vili) yang berfungsi untuk...",
+                    options: ["Memperluas bidang penyerapan sari makanan", "Membuat makanan berputar", "Menghasilkan asam lambung", "Menyimpan udara"],
+                    answer: 0,
+                    explanation: "Vili (jonjot usus) memperluas area penyerapan nutrisi agar masuk ke aliran darah secara efisien.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="50" r="15" fill="#0284c7"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Jonjot Usus (Vili)</text></svg>`
+                },
+                {
+                    topic: "Pankreas",
+                    question: "Kelenjar pankreas menghasilkan getah pankreas yang disalurkan ke usus 12 jari. Getah ini mengandung enzim...",
+                    options: ["Amilase, tripsin, dan lipase", "Ptialin dan pepsin", "Renin dan HCl", "Ptyalin murni"],
+                    answer: 0,
+                    explanation: "Pankreas menghasilkan amilase (karbohidrat), tripsin (protein), dan lipase (lemak).",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="65" y="45" width="70" height="30" rx="10" fill="#fde047" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Kelenjar Pankreas</text></svg>`
+                },
+                {
+                    topic: "Cairan Empedu",
+                    question: "Cairan empedu yang dihasilkan oleh hati memiliki fungsi khusus untuk...",
+                    options: ["Mengemulsikan (memecah) lemak", "Membunuh seluruh sel darah putih", "Menghasilkan vitamin A", "Membentuk energi instan"],
+                    answer: 0,
+                    explanation: "Empedu memecah butiran lemak besar menjadi emulsi lemak kecil agar mudah dicerna enzim lipase.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><ellipse cx="100" cy="60" rx="30" ry="18" fill="#facc15" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Cairan Empedu</text></svg>`
+                },
+                {
+                    topic: "Bakteri E. coli",
+                    question: "Di dalam usus besar manusia terdapat bakteri baik bernama Escherichia coli (E. coli) yang membantu...",
+                    options: ["Membusukkan sisa makanan dan membentuk vitamin K", "Menyerap seluruh racun tubuh", "Menghasilkan asam lambung", "Membuat gigi kuat"],
+                    answer: 0,
+                    explanation: "Bakteri E. coli membantu proses pembusukan sisa makanan serta mensintesis vitamin K.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#a7f3d0" stroke="#059669" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Bakteri E. coli</text></svg>`
+                },
+                {
+                    topic: "Pencernaan Kimiawi",
+                    question: "Pencernaan kimiawi adalah proses perombakan makanan dengan bantuan...",
+                    options: ["Enzim atau zat kimia tubuh", "Gigi dan lidah", "Otot lambung", "Gerak peristaltik"],
+                    answer: 0,
+                    explanation: "Pencernaan kimiawi melibatkan enzim pencernaan yang mengubah zat makanan menjadi molekul sederhana.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Pencernaan Kimiawi</text></svg>`
+                },
+                {
+                    topic: "Pencernaan Mekanik",
+                    question: "Pencernaan mekanik adalah proses mengubah bentuk makanan dari besar menjadi kecil yang melibatkan...",
+                    options: ["Gigi, lidah, dan gerakan otot saluran pencernaan", "Hanya enzim lambung", "Bakteri usus halus", "Getah empedu"],
+                    answer: 0,
+                    explanation: "Pencernaan mekanik terjadi di mulut (oleh gigi) dan di lambung/usus (oleh kontraksi otot).",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Pencernaan Mekanik</text></svg>`
+                },
+                {
+                    topic: "Penyakit Maag",
+                    question: "Penyakit maag (gastritis) ditandai dengan rasa perih di lambung yang biasanya disebabkan oleh...",
+                    options: ["Produksi asam lambung berlebih akibat pola makan tidak teratur", "Terlalu banyak makan buah segar", "Kurang minum air putih", "Kebiasaan rajin olahraga"],
+                    answer: 0,
+                    explanation: "Pola makan tidak teratur membuat asam lambung melukai dinding lambung.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Penyakit Maag</text></svg>`
+                },
+                {
+                    topic: "Penyakit Diare",
+                    question: "Diare adalah gangguan pencernaan di mana feses berair akibat infeksi atau iritasi pada...",
+                    options: ["Usus besar", "Kerongkongan", "Gigi", "Kelenjar air liur"],
+                    answer: 0,
+                    explanation: "Diare terjadi ketika usus besar gagal menyerap air secara normal karena infeksi bakteri/virus.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="30" width="80" height="60" rx="15" fill="none" stroke="#f59e0b" stroke-width="10"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b45309">Gangguan Diare</text></svg>`
+                },
+                {
+                    topic: "Usus Buntu (Appendiks)",
+                    question: "Organ tambahan berbentuk seperti cacing kecil yang terhubung pada usus besar disebut...",
+                    options: ["Usus buntu (appendix)", "Pankreas", "Empedu", "Duodenum"],
+                    answer: 0,
+                    explanation: "Usus buntu terletak di dekat pertemuan usus halus dan usus besar.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="28" fill="#a7f3d0" stroke="#059669" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Usus Buntu</text></svg>`
+                },
+                {
+                    topic: "Fungsi Usus Besar",
+                    question: "Selain menyerap air, usus besar juga berfungsi untuk...",
+                    options: ["Membusukkan sisa makanan menjadi feses", "Mencerna protein nabati", "Menghasilkan sel darah merah", "Memompa cairan empedu"],
+                    answer: 0,
+                    explanation: "Usus besar memadatkan sisa makanan menjadi feses sebelum dikeluarkan melalui rektum dan anus.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="25" width="80" height="70" rx="15" fill="none" stroke="#10b981" stroke-width="14"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Fungsi Usus Besar</text></svg>`
+                },
+                {
+                    topic: "Urutan Saluran",
+                    question: "Urutan perjalanan makanan yang benar pada sistem pencernaan manusia adalah...",
+                    options: ["Mulut ➔ Kerongkongan ➔ Lambung ➔ Usus Halus ➔ Usus Besar ➔ Anus", "Mulut ➔ Lambung ➔ Kerongkongan ➔ Anus", "Mulut ➔ Usus Halus ➔ Lambung ➔ Kerongkongan", "Lambung ➔ Mulut ➔ Usus Besar ➔ Anus"],
+                    answer: 0,
+                    explanation: "Makanan masuk mulut, didorong kerongkongan, dicerna lambung, diserap usus halus, diserap airnya di usus besar, dan dibuang di anus.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="40" y="45" width="120" height="30" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="64" text-anchor="middle" font-size="10" font-weight="bold" fill="#0369a1">Urutan Sistem Pencernaan</text></svg>`
+                },
+                {
+                    topic: "Gigi Taring",
+                    question: "Jenis gigi manusia yang berfungsi untuk merobek makanan adalah...",
+                    options: ["Gigi taring", "Gigi seri", "Gigi geraham", "Gigi susu"],
+                    answer: 0,
+                    explanation: "Gigi taring berbentuk lancip dan tajam khusus untuk merobek daging atau makanan keras.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><polygon points="100,25 80,85 120,85" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Taring</text></svg>`
+                },
+                {
+                    topic: "Gigi Geraham",
+                    question: "Jenis gigi manusia yang memiliki permukaan luas untuk mengunyah dan menghaluskan makanan adalah...",
+                    options: ["Gigi geraham", "Gigi taring", "Gigi seri", "Gigi taring kecil"],
+                    answer: 0,
+                    explanation: "Gigi geraham memiliki tonjolan dan luas permukaan besar untuk melumatkan makanan.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="35" width="60" height="50" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Geraham</text></svg>`
+                },
+                {
+                    topic: "Gigi Seri",
+                    question: "Jenis gigi yang letaknya di depan dan berfungsi untuk memotong atau menggigit makanan adalah...",
+                    options: ["Gigi seri", "Gigi geraham", "Gigi taring", "Gigi bungsu"],
+                    answer: 0,
+                    explanation: "Gigi seri berbentuk seperti pahat untuk memotong makanan seperti buah atau roti.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="80" y="30" width="40" height="55" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Seri</text></svg>`
+                },
+                {
+                    topic: "Penjagaan Kesehatan",
+                    question: "Cara paling efektif untuk mencegah penyakit tipes dan diare yang menyerang pencernaan adalah...",
+                    options: ["Menjaga kebersihan makanan, minuman, dan alat makan", "Makan makanan cepat saji setiap hari", "Tidak pernah mencuci sayuran", "Minum air mentah langsung dari sungai"],
+                    answer: 0,
+                    explanation: "Menjaga kebersihan mencegah masuknya bakteri Salmonella atau E. coli penyebab infeksi.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#bbf7d0" stroke="#16a34a" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Higienitas Makanan</text></svg>`
+                }
+            ],
+            hard: [
+                {
+                    topic: "Enzim Pepsin",
+                    question: "Di dalam lambung, enzim pepsin yang aktif bekerja bertugas khusus untuk memecah protein menjadi...",
+                    options: ["Pepton dan asam amino", "Asam lemak dan gliserol", "Zat gula sederhana", "Vitamin larut lemak"],
+                    answer: 0,
+                    explanation: "Pepsin adalah protease utama di lambung yang memecah protein kompleks menjadi pepton.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Enzim Pepsin Lambung</text></svg>`
+                },
+                {
+                    topic: "Enzim Renin",
+                    question: "Enzim khusus yang hanya ditemukan pada lambung bayi untuk menggumpalkan protein susu (kasein) adalah...",
+                    options: ["Enzim renin", "Enzim ptialin", "Enzim tripsin", "Enzim ptyalin"],
+                    answer: 0,
+                    explanation: "Enzim renin menggumpalkan protein susu agar tidak langsung lewat begitu saja dari lambung bayi.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="35" fill="#fecaca" stroke="#ef4444" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Enzim Renin</text></svg>`
+                },
+                {
+                    topic: "Usus 12 Jari",
+                    question: "Bagian pertama usus halus tempat bermuaranya saluran getah pankreas dan saluran empedu disebut...",
+                    options: ["Duodenum (usus 12 jari)", "Jejunum", "Ileum", "Sekum"],
+                    answer: 0,
+                    explanation: "Duodenum menerima cairan empedu dari hati dan getah pankreas untuk pencernaan kimiawi lanjutan.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 40 Q100 20 140 40" fill="none" stroke="#38bdf8" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Duodenum (Usus 12 Jari)</text></svg>`
+                },
+                {
+                    topic: "Emulsi Lemak",
+                    question: "Mengapa cairan empedu sangat penting dalam pencernaan lemak padahal empedu tidak mengandung enzim?",
+                    options: ["Karena empedu mengemulsikan lemak menjadi butiran sangat kecil agar enzim lipase mudah bekerja", "Karena empedu langsung mengubah lemak menjadi energi otot", "Karena empedu membunuh seluruh bakteri usus", "Karena empedu mengubah lemak menjadi vitamin C"],
+                    answer: 0,
+                    explanation: "Empedu bertindak sebagai deterjen alami yang memperluas luas permukaan lemak untuk diurai enzim lipase.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><ellipse cx="100" cy="60" rx="32" ry="18" fill="#facc15" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Emulsifikasi Lemak</text></svg>`
+                },
+                {
+                    topic: "pH Lambung",
+                    question: "Lingkungan di dalam lambung bersifat sangat asam karena adanya HCl. Berapa kisaran tingkat pH normal di dalam lambung saat mencerna makanan?",
+                    options: ["pH 1.5 sampai 3.5 (sangat asam)", "pH 7.0 (netral)", "pH 9.0 sampai 11 (basa kuat)", "pH 14.0"],
+                    answer: 0,
+                    explanation: "Keasaman tinggi (pH 1.5 - 3.5) diperlukan untuk membunuh mikroorganisme dan mengaktifkan pepsinogen.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">pH Asam Lambung</text></svg>`
+                },
+                {
+                    topic: "Vitamin K & B12",
+                    question: "Vitamin apa saja yang disintesis (dihasilkan) oleh bakteri Escherichia coli di dalam usus besar manusia?",
+                    options: ["Vitamin K dan Vitamin B12", "Vitamin A dan Vitamin C", "Vitamin D murni", "Vitamin E"],
+                    answer: 0,
+                    explanation: "Bakteri usus besar bersimbiosis menghasilkan vitamin K (pembekuan darah) dan beberapa vitamin B.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#a7f3d0" stroke="#059669" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Vitamin K & B12</text></svg>`
+                },
+                {
+                    topic: "Struktur Jonjot Usus",
+                    question: "Di dalam vili usus halus terdapat pembuluh darah kapiler dan pembuluh kil (lakteal). Apa fungsi utama pembuluh kil?",
+                    options: ["Menyerap dan mengangkut asam lemak serta gliserol", "Menyerap air seni", "Mengangkut oksigen murni", "Menghasilkan sel darah putih"],
+                    answer: 0,
+                    explanation: "Glukosa dan asam amino diserap kapiler darah, sedangkan asam lemak dan gliserol diserap pembuluh kil (limfa).",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="55" r="16" fill="#0284c7"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Pembuluh Kil (Lakteal)</text></svg>`
+                },
+                {
+                    topic: "Absorpsi Air",
+                    question: "Jika usus besar mengalami gangguan sehingga gagal menyerap air secara optimal, kondisi medis apa yang akan dialami seseorang?",
+                    options: ["Diare (feses encer)", "Konstipasi akut", "Batu empedu", "Penyakit maag kronis"],
+                    answer: 0,
+                    explanation: "Kegagalan penyerapan air di usus besar menyebabkan feses berwujud cair atau diare.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="30" width="80" height="60" rx="15" fill="none" stroke="#f59e0b" stroke-width="10"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b45309">Patologi Diare</text></svg>`
+                },
+                {
+                    topic: "Pankreatin",
+                    question: "Tripsinogen yang disekresikan pankreas akan diaktifkan menjadi enzim tripsin di usus halus oleh enzim khusus bernama...",
+                    options: ["Enterokinase", "Ptialin", "Pepsinogen", "Amilase saliva"],
+                    answer: 0,
+                    explanation: "Enterokinase mengubah tripsinogen inaktif menjadi tripsin aktif untuk mencerna protein di usus halus.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="65" y="45" width="70" height="30" rx="10" href="#" fill="#fde047" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Enzim Enterokinase</text></svg>`
+                },
+                {
+                    topic: "Peristaltik Usus",
+                    question: "Kontraksi otot polos secara ritmik yang mendorong kimus (bubur makanan) sepanjang saluran pencernaan diatur oleh sistem saraf...",
+                    options: ["Sistem saraf otonom (Enterik)", "Sistem saraf pusat sadar", "Sistem saraf motorik rangka", "Sistem saraf panca indra"],
+                    answer: 0,
+                    explanation: "Sistem saraf enterik mengatur pergerakan peristaltik secara otomatis tanpa bisa kita kendalikan secara sadar.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 40 Q100 80 150 40" fill="none" stroke="#0284c7" stroke-width="10"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Saraf Enterik / Otonom</text></svg>`
+                },
+                {
+                    topic: "Kimus (Chyme)",
+                    question: "Bubur makanan asam setengah cair yang keluar dari lambung menuju usus halus disebut dengan istilah...",
+                    options: ["Kimus (Chyme)", "Bolus", "Feses", "Empedu matang"],
+                    answer: 0,
+                    explanation: "Makanan di lambung yang bercampur asam lambung disebut kimus sebelum masuk ke duodenum.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Bubur Kimus</text></svg>`
+                },
+                {
+                    topic: "Bolus",
+                    question: "Sebelum masuk ke kerongkongan, gumpalan makanan yang telah dikunyah di dalam mulut disebut sebagai...",
+                    options: ["Bolus", "Kimus", "Chyle", "Feses"],
+                    answer: 0,
+                    explanation: "Makanan yang dibentuk dan dileunakkan di mulut sebelum ditelan disebut bolus.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="30" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Gumpalan Bolus</text></svg>`
+                },
+                {
+                    topic: "Hati & Metabolisme",
+                    question: "Selain memproduksi empedu, hati memiliki peran vital dalam sistem pencernaan dan metabolisme dengan cara...",
+                    options: ["Menyimpan cadangan glukosa (glikogen) dan menawarkan racun (detoksifikasi)", "Memompa darah bersih ke otak", "Menghasilkan sel darah putih", "Menyaring udara pernapasan"],
+                    answer: 0,
+                    explanation: "Hati mendetoksifikasi racun dari darah serta mengatur kadar gula darah melalui penyimpanan glikogen.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M45 45 C50 20 120 20 150 45 Z" fill="#fb7185" stroke="#e11d48" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#be123c">Detoksifikasi Hati</text></svg>`
+                },
+                {
+                    topic: "Bakteri Patogen",
+                    question: "Infeksi bakteri Salmonella typhi pada saluran pencernaan manusia dapat menyebabkan penyakit berbahaya yaitu...",
+                    options: ["Demam Tifoid (Tipes)", "Penyakit Maag", "Konstipasi ringan", "Sembelit kronis"],
+                    answer: 0,
+                    explanation: "Bakteri Salmonella typhi menyerang saluran pencernaan dan menyebabkan demam tifoid.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#fecaca" stroke="#ef4444" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Bakteri Salmonella (Tipes)</text></svg>`
+                },
+                {
+                    topic: "Usus Kosong (Jejunum)",
+                    question: "Bagian usus halus yang terletak di antara duodenum dan ileum serta memiliki panjang sekitar 2-3 meter adalah...",
+                    options: ["Jejunum (usus kosong)", "Kolon asendens", "Rektum", "Sekum"],
+                    answer: 0,
+                    explanation: "Jejunum adalah bagian kedua usus halus tempat sebagian besar pencernaan kimiawi dan penyerapan berlangsung.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 50 Q100 20 150 50" fill="none" stroke="#38bdf8" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Jejunum (Usus Kosong)</text></svg>`
+                },
+                {
+                    topic: "Usus Penyerapan (Ileum)",
+                    question: "Bagian akhir dari usus halus yang terhubung langsung dengan usus besar adalah...",
+                    options: ["Ileum (usus penyerapan)", "Duodenum", "Pilorus", "Kardiak"],
+                    answer: 0,
+                    explanation: "Ileum berfungsi menyelesaikan penyerapan nutrisi sisa sebelum masuk ke usus besar.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 60 Q100 20 150 60" fill="none" stroke="#0284c7" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Ileum (Usus Penyerapan)</text></svg>`
+                },
+                {
+                    topic: "Sfingter Pilorus",
+                    question: "Katup otot berbentuk cincin yang mengatur pengeluaran kimus dari lambung menuju usus 12 jari disebut...",
+                    options: ["Sfingter pilorus", "Sfingter kardia", "Katup epiglotis", "Katup aorta"],
+                    answer: 0,
+                    explanation: "Sfingter pilorus membuka secara bertahap agar usus 12 jari tidak kewalahan menerima kimus asam dari lambung.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="28" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Sfingter Pilorus</text></svg>`
+                },
+                {
+                    topic: "Epiglotis",
+                    question: "Katup tulang rawan yang menutup saluran pernapasan (tenggorokan) saat kita menelan makanan agar tidak tersedak adalah...",
+                    options: ["Epiglotis", "Uvula", "Tonsil", "Faring"],
+                    answer: 0,
+                    explanation: "Epiglotis memastikan makanan masuk ke kerongkongan dan bukan ke saluran pernapasan.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M70 50 Q100 20 130 50" fill="none" stroke="#ea580c" stroke-width="8"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Katup Epiglotis</text></svg>`
+                },
+                {
+                    topic: "Gerakan Massal Usus",
+                    question: "Gerakan kontraksi kuat di usus besar yang mendorong feses menuju rektum menjelang buang air besar disebut...",
+                    options: ["Gerakan massa (mass movement)", "Gerak peristaltik lambat", "Gerak osmotik", "Refleks muntah"],
+                    answer: 0,
+                    explanation: "Gerakan massa mendorong isi usus besar ke rektum untuk memicu refleks defekasi.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="25" width="80" height="70" rx="15" fill="none" stroke="#10b981" stroke-width="14"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Gerakan Massa Usus Besar</text></svg>`
+                },
+                {
+                    topic: "Enzim Sukrase & Laktase",
+                    question: "Di dalam usus halus, dinding usus menghasilkan enzim yang merombak disakarida menjadi monosakarida, contohnya enzim...",
+                    options: ["Sukrase, maltase, dan laktase", "Pepsin dan renin", "Ptialin dan amilase", "Lipase lambung"],
+                    answer: 0,
+                    explanation: "Enzim disakaridase seperti laktase mencerna laktosa menjadi glukosa dan galaktosa agar siap diserap.",
+                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#bae6fd" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Sukrase, Maltase, Laktase</text></svg>`
+                }
+            ]
+        };
+
+        let currentActiveQuiz = null;
+        let quizTimerInterval = null;
+        let quizTimeLeft = 30;
+
+        function openQuizModal() {
+            gamePaused = true;
+            playSound('pop');
+
+            const currentBank = quizBanks[difficulty] || quizBanks['easy'];
+            const q = currentBank[Math.floor(Math.random() * currentBank.length)];
+            currentActiveQuiz = q;
+
+            document.getElementById('quizBadge').textContent = `Topik: ${q.topic} (${difficulty.toUpperCase()})`;
+            document.getElementById('quizQuestion').textContent = q.question;
+            document.getElementById('quizIllustration').innerHTML = q.svgIllustration;
+            
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-xs sm:text-sm font-medium text-slate-800 transition flex items-center justify-between shadow-sm";
+                btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span>`;
+                btn.onclick = () => answerQuiz(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('quizExplanation').classList.add('hidden');
+            document.getElementById('quizModal').classList.remove('hidden');
+            document.getElementById('quizModal').classList.add('flex');
+
+            quizTimeLeft = 30;
+            document.getElementById('quizTimer').textContent = `Waktu: ${quizTimeLeft}s`;
+            if (quizTimerInterval) clearInterval(quizTimerInterval);
+            quizTimerInterval = setInterval(() => {
+                quizTimeLeft--;
+                document.getElementById('quizTimer').textContent = `Waktu: ${quizTimeLeft}s`;
+                if(quizTimeLeft <= 0) {
+                    clearInterval(quizTimerInterval);
+                    answerQuiz(-1);
+                }
+            }, 1000);
+        }
+
+        function answerQuiz(selectedIndex) {
+            if (quizTimerInterval) clearInterval(quizTimerInterval);
+            questionsAnsweredCount++;
+
+            const isCorrect = (selectedIndex === currentActiveQuiz.answer);
+            if (isCorrect) {
+                correctAnswersCount++;
+                score += (difficulty === 'hard' ? 250 : difficulty === 'medium' ? 200 : 150);
+                playSound('correct');
+                triggerFeedback('green');
+            } else {
+                lives--;
+                playSound('wrong');
+                triggerFeedback('red');
+            }
+            updateHUD();
+
+            evaluationLog.push({
+                question: currentActiveQuiz.question,
+                correct: isCorrect,
+                explanation: currentActiveQuiz.explanation
+            });
+
+            const options = document.getElementById('quizOptions').children;
+            for(let i=0; i<options.length; i++) {
+                options[i].disabled = true;
+                if(i === currentActiveQuiz.answer) {
+                    options[i].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+                } else if(i === selectedIndex && !isCorrect) {
+                    options[i].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+                }
+            }
+
+            document.getElementById('explanationText').textContent = currentActiveQuiz.explanation;
+            document.getElementById('quizExplanation').classList.remove('hidden');
+
+            if (lives <= 0) {
+                setTimeout(() => {
+                    closeQuizModal();
+                    endGame(false);
+                }, 1500);
+            }
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quizModal').classList.remove('flex');
+            document.getElementById('quizModal').classList.add('hidden');
+            gamePaused = false;
+        }
+
+        function triggerFeedback(color) {
+            const fb = document.getElementById('visualFeedback');
+            fb.style.borderColor = (color === 'green') ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)';
+            fb.style.opacity = '1';
+            setTimeout(() => {
+                fb.style.opacity = '0';
+            }, 300);
+        }
+
+        // --- CANVAS GAME ENGINE ---
+        let canvas, ctx;
+        let gameRunning = false;
+        let gamePaused = false;
+        let animationFrameId = null;
+        let score = 0;
+        let lives = 3;
+        let timeLeft = 120;
+        let questionsAnsweredCount = 0;
+        let correctAnswersCount = 0;
+        let evaluationLog = [];
+        let balloons = [];
+        let projectiles = [];
+        let shooter = { x: 200, y: 500, speed: 8, moveLeft: false, moveRight: false };
+
+        function initCanvasSize() {
+            canvas = document.getElementById('gameCanvas');
+            ctx = canvas.getContext('2d');
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            shooter.x = canvas.width / 2;
+            shooter.y = canvas.height - 40;
+
+            canvas.onpointermove = (e) => {
+                if (!gameRunning || gamePaused) return;
+                const rect = canvas.getBoundingClientRect();
+                shooter.x = e.clientX - rect.left;
+            };
+
+            canvas.onpointerdown = (e) => {
+                if (!gameRunning || gamePaused) return;
+                const rect = canvas.getBoundingClientRect();
+                shooter.x = e.clientX - rect.left;
+                fireProjectile();
+            };
+
+            window.onkeydown = (e) => {
+                if (!gameRunning || gamePaused) return;
+                if (e.key === 'ArrowLeft' || e.key === 'a') shooter.moveLeft = true;
+                if (e.key === 'ArrowRight' || e.key === 'd') shooter.moveRight = true;
+                if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w') {
+                    e.preventDefault();
+                    fireProjectile();
+                }
+            };
+
+            window.onkeyup = (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a') shooter.moveLeft = false;
+                if (e.key === 'ArrowRight' || e.key === 'd') shooter.moveRight = false;
+            };
+        }
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            shooter.y = canvas.height - 40;
+        }
+
+        function fireProjectile() {
+            if (projectiles.length < 6 && gameRunning && !gamePaused) {
+                projectiles.push({
+                    x: shooter.x,
+                    y: shooter.y - 12,
+                    radius: 6,
+                    speed: 11
+                });
+                playSound('click');
+            }
+        }
+
+        let frameCounter = 0;
+        function startCanvasGame() {
+            gameRunning = true;
+            gamePaused = false;
+            function loop() {
+                if (gameRunning && !gamePaused) {
+                    updateGame();
+                    renderGame();
+                }
+                animationFrameId = requestAnimationFrame(loop);
+            }
+            animationFrameId = requestAnimationFrame(loop);
+        }
+
+        function stopCanvasGame() {
+            gameRunning = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        }
+
+        function updateGame() {
+            frameCounter++;
+            const config = diffConfig[difficulty];
+
+            if (shooter.moveLeft) shooter.x -= shooter.speed;
+            if (shooter.moveRight) shooter.x += shooter.speed;
+            shooter.x = Math.max(20, Math.min(canvas.width - 20, shooter.x));
+
+            if (frameCounter % config.spawnRate === 0 && balloons.length < config.maxBalloons) {
                 spawnBalloon();
-                lastBalloonSpawn = timestamp;
             }
 
-            // Clear Canvas
-            ctx.clearRect(0, 0, width, height);
-            
-            // Update & Draw Particles
-            for(let i = particles.length-1; i >= 0; i--) {
-                let p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life -= 0.02;
-                
-                if(p.life <= 0) {
-                    particles.splice(i, 1);
-                    continue;
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                let p = projectiles[i];
+                p.y -= p.speed;
+                if (p.y < 0) {
+                    projectiles.splice(i, 1);
                 }
-
-                ctx.globalAlpha = p.life;
-                ctx.fillStyle = p.color;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
-                ctx.fill();
-                ctx.globalAlpha = 1.0;
             }
 
-            // Update & Draw Balloons
-            for(let i = balloons.length-1; i >= 0; i--) {
+            for (let i = balloons.length - 1; i >= 0; i--) {
                 let b = balloons[i];
-                b.x += b.speedX;
-                b.y += b.speedY * Math.cos(b.phase + timestamp*0.002); // slight wobble
+                b.x += b.vx;
+                b.y += b.vy;
 
-                // Remove off screen
-                if(b.x < -100 || b.x > width + 100) {
-                    balloons.splice(i, 1);
-                    continue;
+                if (b.x < 30 || b.x > canvas.width - 30) {
+                    b.vx *= -1;
                 }
 
-                // Draw Balloon
-                ctx.fillStyle = b.color;
-                ctx.beginPath();
-                // Balloon body
-                ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
-                ctx.fill();
-                // Balloon tail
-                ctx.beginPath();
-                ctx.moveTo(b.x, b.y + b.radius);
-                ctx.lineTo(b.x - 8, b.y + b.radius + 12);
-                ctx.lineTo(b.x + 8, b.y + b.radius + 12);
-                ctx.fill();
-                // String
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(b.x, b.y + b.radius + 12);
-                ctx.quadraticCurveTo(b.x-10, b.y + b.radius + 20, b.x, b.y + b.radius + 35);
-                ctx.stroke();
-
-                // Highlight/Reflection
-                ctx.fillStyle = 'rgba(255,255,255,0.4)';
-                ctx.beginPath();
-                ctx.arc(b.x - b.radius*0.3, b.y - b.radius*0.3, b.radius*0.2, 0, Math.PI*2);
-                ctx.fill();
-            }
-
-            // Update & Draw Arrows
-            for(let i = arrows.length-1; i >= 0; i--) {
-                let a = arrows[i];
-                a.y -= a.speed;
-
-                if(a.y < -50) {
-                    arrows.splice(i, 1);
-                    continue;
-                }
-
-                // Collision Check
-                let hit = false;
-                for(let j = balloons.length-1; j >= 0; j--) {
-                    let b = balloons[j];
-                    // Circle-Rect collision approx
-                    let dx = Math.abs(a.x - b.x);
-                    let dy = Math.abs(a.y - b.y);
-                    if(dx < b.radius && dy < b.radius + a.height) {
-                        // HIT!
-                        hit = true;
-                        createParticles(b.x, b.y, b.color);
-                        balloons.splice(j, 1);
-                        playSound('pop');
+                let hitByProjectile = false;
+                for (let j = projectiles.length - 1; j >= 0; j--) {
+                    let p = projectiles[j];
+                    let dist = Math.hypot(p.x - b.x, p.y - b.y);
+                    if (dist < b.radius + p.radius) {
+                        projectiles.splice(j, 1);
+                        hitByProjectile = true;
                         break;
                     }
                 }
 
-                if(hit) {
-                    arrows.splice(i, 1);
-                    triggerQuiz();
-                    return; // exit loop early to avoid drawing frame while pausing
+                if (hitByProjectile || b.y > canvas.height + 40) {
+                    if (hitByProjectile) {
+                        balloons.splice(i, 1);
+                        score += 50;
+                        updateHUD();
+                        openQuizModal();
+                    } else {
+                        balloons.splice(i, 1);
+                    }
                 }
+            }
+        }
 
-                // Draw Arrow
-                ctx.fillStyle = '#cbd5e1'; // Shaft
-                ctx.fillRect(a.x - a.width/2, a.y, a.width, a.height);
-                
-                ctx.fillStyle = '#f87171'; // Head
-                ctx.beginPath();
-                ctx.moveTo(a.x - a.width*2, a.y);
-                ctx.lineTo(a.x + a.width*2, a.y);
-                ctx.lineTo(a.x, a.y - 15);
-                ctx.fill();
+        function spawnBalloon() {
+            const radius = Math.max(24, Math.min(canvas.width * 0.07, 32));
+            const side = Math.floor(Math.random() * 3);
+            let x, vx, vy;
+            const speed = (Math.random() * 1.5 + 1.8) * diffConfig[difficulty].speedMultiplier;
+
+            if (side === 0) {
+                x = Math.random() * (canvas.width * 0.3) + 30;
+                vx = Math.random() * 1.8 + 0.8;
+                vy = speed;
+            } else if (side === 1) {
+                x = canvas.width - (Math.random() * (canvas.width * 0.3) + 30);
+                vx = -(Math.random() * 1.8 + 0.8);
+                vy = speed;
+            } else {
+                x = Math.random() * (canvas.width - 100) + 50;
+                vx = (Math.random() - 0.5) * 1.2;
+                vy = speed * 1.15;
             }
 
-            // Draw Bow (Base)
-            let bowX = Math.max(50, Math.min(width - 50, mouseX));
-            ctx.strokeStyle = '#facc15';
-            ctx.lineWidth = 6;
+            const y = -30;
+            const color = ['#38bdf8', '#a855f7', '#10b981', '#f59e0b', '#ec4899', '#6366f1'][Math.floor(Math.random() * 6)];
+
+            balloons.push({ x, y, vx, vy, radius, color });
+        }
+
+        function renderGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(2, 132, 199, 0.9)';
+            ctx.font = 'bold 11px Poppins';
+            ctx.fillText("🛸 Gastro Galaxy • Misi UFO Pencernaan", 16, 45);
+
+            projectiles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#0284c7';
+                ctx.shadowColor = '#38bdf8';
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+
+            balloons.forEach(u => {
+                ctx.save();
+                ctx.translate(u.x, u.y);
+
+                ctx.beginPath();
+                ctx.arc(0, -u.radius * 0.3, u.radius * 0.5, Math.PI, 0, false);
+                ctx.fillStyle = 'rgba(224, 242, 254, 0.9)';
+                ctx.shadowColor = u.color;
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = '#0284c7';
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.ellipse(0, 0, u.radius, u.radius * 0.38, 0, 0, Math.PI * 2);
+                ctx.fillStyle = u.color;
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#ffffff';
+                ctx.stroke();
+
+                for (let i = -2; i <= 2; i++) {
+                    ctx.beginPath();
+                    ctx.arc(i * (u.radius * 0.35), u.radius * 0.05, 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fef08a';
+                    ctx.fill();
+                }
+
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            });
+
+            ctx.save();
+            ctx.translate(shooter.x, shooter.y);
+
             ctx.beginPath();
-            ctx.arc(bowX, height - 30, 45, Math.PI, 0);
+            ctx.arc(0, 12, 18, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#0284c7';
             ctx.stroke();
-            
-            // Bow grip
-            ctx.fillStyle = '#8b5cf6';
-            ctx.fillRect(bowX - 15, height - 55, 30, 55);
-            
-            // Decorative
-            ctx.fillStyle = '#34d399';
+
             ctx.beginPath();
-            ctx.arc(bowX, height - 35, 10, 0, Math.PI*2);
+            ctx.rect(-4, -14, 8, 26);
+            ctx.fillStyle = '#0284c7';
             ctx.fill();
 
+            ctx.beginPath();
+            ctx.moveTo(0, -26);
+            ctx.lineTo(-12, -10);
+            ctx.lineTo(12, -10);
+            ctx.closePath();
+            ctx.fillStyle = '#ef4444';
+            ctx.shadowColor = '#ef4444';
+            ctx.shadowBlur = 8;
+            ctx.fill();
+            ctx.shadowBlur = 0;
 
-            if(isPlaying && !isPaused && !isQuizMode) {
-                requestAnimationFrame(gameLoop);
-            }
+            ctx.restore();
         }
 
-
-        // --- 6. QUIZ MECHANICS ---
-        function triggerQuiz() {
-            isQuizMode = true;
-            
-            // Load current question
-            if(currentQuestionIndex >= activeQuestions.length) {
-                // If run out of questions, fetch a random one from bank
-                let randomQ = questionBank[Math.floor(Math.random() * questionBank.length)];
-                activeQuestions.push(randomQ);
-            }
-            
-            let q = activeQuestions[currentQuestionIndex];
-            
-            document.getElementById('quiz-question').innerText = q.q;
-            
-            let optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = '';
-            
-            // Create options visually
-            q.opts.forEach((opt, index) => {
-                let btn = document.createElement('button');
-                btn.className = "w-full text-left bg-indigo-800 hover:bg-indigo-700 active:bg-indigo-600 border-2 border-indigo-500 rounded-2xl p-5 md:p-6 transition text-white font-bold text-lg md:text-xl shadow-[0_4px_15px_rgba(0,0,0,0.3)] active:translate-y-1";
-                btn.innerText = String.fromCharCode(65 + index) + ". " + opt;
-                btn.onclick = () => handleAnswer(index, q);
-                optionsContainer.appendChild(btn);
-            });
-
-            document.getElementById('quiz-feedback-overlay').style.display = 'none';
-            document.getElementById('quiz-modal').style.display = 'flex';
-        }
-
-        function handleAnswer(selectedIndex, qData) {
-            let isCorrect = selectedIndex === qData.ans;
-            
-            // Record for evaluation
-            evaluationHistory.push({
-                question: qData.q,
-                userAnswer: qData.opts[selectedIndex],
-                correctAnswer: qData.opts[qData.ans],
-                isCorrect: isCorrect,
-                explanation: qData.exp
-            });
-
-            let overlay = document.getElementById('quiz-feedback-overlay');
-            let iconBox = document.getElementById('quiz-feedback-icon');
-            let titleBox = document.getElementById('quiz-feedback-text');
-            let descBox = document.getElementById('quiz-feedback-desc');
-
-            if(isCorrect) {
-                playSound('correct');
-                score += 100;
-                titleBox.innerText = "BENAR!";
-                titleBox.className = "text-5xl font-black mb-4 text-green-400 drop-shadow-[0_0_15px_rgba(74,222,128,0.8)]";
-                iconBox.innerHTML = `<svg class="w-24 h-24 text-green-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>`;
-            } else {
-                playSound('wrong');
-                lives--;
-                titleBox.innerText = "SALAH!";
-                titleBox.className = "text-5xl font-black mb-4 text-red-400 drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]";
-                iconBox.innerHTML = `<svg class="w-24 h-24 text-red-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-            }
-
-            descBox.innerText = qData.exp;
-            overlay.style.display = 'flex';
-            updateHUD();
-        }
-
-        function resumeGameAfterQuiz() {
-            playSound('click');
-            document.getElementById('quiz-modal').style.display = 'none';
-            
-            currentQuestionIndex++;
-
-            if(lives <= 0) { 
-                endGame(false);
-                return;
-            }
-
-            isQuizMode = false;
-            lastTime = performance.now();
-            requestAnimationFrame(gameLoop);
-        }
-
-        // --- 7. GAME OVER & RESULT ---
         function endGame(isVictory) {
-            isPlaying = false;
-            if(timerInterval) clearInterval(timerInterval);
-            document.getElementById('quiz-modal').style.display = 'none'; 
-            
-            BGMPlayer.stop();
+            stopCanvasGame();
+            stopBGM();
+            playSound(isVictory ? 'win' : 'wrong');
 
-            if(isVictory || lives > 0) {
-                playSound('victory');
-                document.getElementById('result-title').innerText = "Waktu Habis / Selesai!";
-                document.getElementById('result-title').className = "text-5xl md:text-7xl font-extrabold text-center text-green-400 mb-6 drop-shadow-[0_0_20px_rgba(74,222,128,0.5)] z-10";
-            } else {
-                playSound('gameover');
-                document.getElementById('result-title').innerText = "Game Over!";
-                document.getElementById('result-title').className = "text-6xl md:text-7xl font-extrabold text-center text-red-500 mb-6 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)] z-10";
+            document.getElementById('resultEmoji').textContent = isVictory ? '🏆' : '💥';
+            document.getElementById('resultTitle').textContent = isVictory ? 'Misi Sukses!' : 'Misi Berakhir!';
+            document.getElementById('resultSubtitle').textContent = isVictory ? 'Hebat! Kamu menguasai sistem pencernaan!' : 'Tetap semangat! Coba pelajari lagi materinya.';
+
+            let stars = 1;
+            const ratio = correctAnswersCount / Math.max(1, questionsAnsweredCount);
+            if (score >= 400 || ratio >= 0.75) stars = 3;
+            else if (score >= 200 || ratio >= 0.5) stars = 2;
+
+            let starStr = '';
+            for (let i = 0; i < 3; i++) {
+                starStr += (i < stars) ? '⭐ ' : '☆ ';
             }
+            document.getElementById('starContainer').textContent = starStr;
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalCorrect').textContent = `${correctAnswersCount}/${questionsAnsweredCount}`;
 
-            document.getElementById('result-score').innerText = score;
+            const reportData = {
+                timestamp: new Date().toLocaleString('id-ID'),
+                name: playerName,
+                playerClass: playerClass,
+                difficulty: difficulty,
+                score: score,
+                correctCount: correctAnswersCount,
+                totalAnswered: questionsAnsweredCount,
+                status: isVictory ? 'Menang' : 'Selesai'
+            };
+            sendDataToGoogleSheet(reportData);
 
-            // Calculate Stars
-            let stars = 0;
-            let correctCount = evaluationHistory.filter(e => e.isCorrect).length;
-            if (correctCount >= 10) stars = 3;       
-            else if (correctCount >= 5) stars = 2;   
-            else if (correctCount >= 1) stars = 1;   
-
-            let starsHTML = '';
-            for(let i=0; i<3; i++) {
-                if(i < stars) {
-                    starsHTML += `<svg class="w-16 h-16 md:w-20 md:h-20 text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
-                } else {
-                    starsHTML += `<svg class="w-16 h-16 md:w-20 md:h-20 text-slate-700/50" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`;
-                }
-            }
-            document.getElementById('result-stars').innerHTML = starsHTML;
-
-            // Generate Evaluation
-            let evalContainer = document.getElementById('evaluation-list');
-            evalContainer.innerHTML = '';
-            
-            if(evaluationHistory.length === 0) {
-                evalContainer.innerHTML = '<p class="text-slate-400 text-lg italic text-center">Belum ada pertanyaan yang dijawab.</p>';
+            const evalList = document.getElementById('evaluationList');
+            evalList.innerHTML = '';
+            if (evaluationLog.length === 0) {
+                evalList.innerHTML = '<p class="text-slate-500 text-center">Belum ada soal terjawab.</p>';
             } else {
-                evaluationHistory.forEach((e, i) => {
-                    let bgClass = e.isCorrect ? 'bg-green-900/40 border-green-500' : 'bg-red-900/40 border-red-500';
-                    let icon = e.isCorrect ? '✅' : '❌';
-                    let html = `
-                    <div class="p-4 rounded-xl border-2 ${bgClass} shadow-md">
-                        <p class="text-base md:text-lg font-bold text-white mb-2"><span class="mr-2">${icon}</span> Q${i+1}: ${e.question}</p>
-                        <p class="text-sm md:text-base text-slate-300 mb-1"><span class="opacity-70 font-semibold">Jawabanmu:</span> ${e.userAnswer}</p>
-                        ${!e.isCorrect ? `<p class="text-sm md:text-base text-green-400 mb-3"><span class="opacity-70 font-semibold">Seharusnya:</span> ${e.correctAnswer}</p>` : ''}
-                        <p class="text-sm md:text-base text-blue-200 mt-3 pt-3 border-t border-slate-600 bg-slate-950/50 p-3 rounded-lg leading-relaxed">
-                            <span class="font-extrabold text-yellow-300 tracking-wide uppercase text-xs block mb-1">Pembahasan</span> ${e.explanation}
-                        </p>
-                    </div>`;
-                    evalContainer.innerHTML += html;
+                evaluationLog.forEach((log, idx) => {
+                    const div = document.createElement('div');
+                    div.className = "p-2 rounded-xl bg-sky-50/70 border border-sky-100 space-y-1";
+                    div.innerHTML = `
+                        <div class="flex items-center space-x-1">
+                            <span>${log.correct ? '✅' : '❌'}</span>
+                            <span class="font-bold text-slate-800">Soal ${idx + 1}</span>
+                        </div>
+                        <p class="text-slate-600 text-[11px]">${log.explanation}</p>
+                    `;
+                    evalList.appendChild(div);
                 });
             }
 
-            navTo('result-screen');
+            goToScreen('resultScreen');
         }
 
-        function resetGame() {
-            isPlaying = false;
-            if(timerInterval) clearInterval(timerInterval);
-            document.getElementById('pause-modal').style.display = 'none';
-            document.getElementById('quiz-modal').style.display = 'none';
+        function restartGame() {
+            startGameSession();
         }
-
     </script>
 </body>
 </html>
