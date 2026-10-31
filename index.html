@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gastro Galaxy: A Journey Inside the Human Body</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gastro Galaxy: Galaxy Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -15,57 +15,63 @@
         }
 
         body {
-            background: linear-gradient(135deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
-            color: #1e293b;
-            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            color: #f8fafc;
+            min-height: 100dvh;
             margin: 0;
             overflow-x: hidden;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 0;
         }
 
-        /* Responsive Screen Container matching mobile and laptop viewports automatically */
+        @media (min-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+        }
+
+        /* Fully Responsive Screen Container */
         .screen {
             display: none;
             width: 100%;
+            min-height: 100dvh;
             max-width: 100vw;
-            height: 100vh;
-            max-height: 100vh;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             flex-direction: column;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        /* Splash Screen specific background image styling with transparent overlay to keep background clear */
+        @media (min-width: 640px) {
+            .screen {
+                min-height: auto;
+                height: 92dvh;
+                max-height: 900px;
+                max-width: 520px;
+                border-radius: 2.5rem;
+                border: 3px solid rgba(56, 189, 248, 0.4);
+                overflow: hidden;
+            }
+        }
+
         #splashScreen {
-            background: linear-gradient(rgba(2, 132, 199, 0.25), rgba(3, 105, 161, 0.45)), url('https://i.imgur.com/5JNcJuS.jpeg');
+            background: linear-gradient(rgba(15, 23, 42, 0.45), rgba(30, 27, 75, 0.65)), url('https://i.imgur.com/oFtGj5p.png');
             background-size: cover;
             background-position: center;
-        }
-
-        @media (min-width: 768px) {
-            .screen {
-                max-width: 520px;
-                height: 90vh;
-                max-height: 880px;
-                border-radius: 2.5rem;
-                border: 3px solid rgba(255, 255, 255, 0.7);
-            }
         }
 
         .screen.active {
             display: flex;
         }
 
-        /* Custom Animations */
         @keyframes floatSlow {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(2deg); }
+            50% { transform: translateY(-8px) rotate(1.5deg); }
         }
 
         .floating {
@@ -77,8 +83,17 @@
             50% { box-shadow: 0 0 25px rgba(56, 189, 248, 0.8); }
         }
 
+        @keyframes pulseGreen {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(16, 185, 129, 0.8); }
+        }
+
         .glow-box {
             animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        .pulse-green {
+            animation: pulseGreen 2.5s ease-in-out infinite;
         }
 
         @keyframes scaleUp {
@@ -90,7 +105,6 @@
             animation: scaleUp 0.25s ease-out forwards;
         }
 
-        /* Canvas Game Styles */
         #gameCanvas {
             touch-action: none;
             display: block;
@@ -104,118 +118,156 @@
             width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(14, 165, 233, 0.3);
+            background: rgba(56, 189, 248, 0.3);
             border-radius: 4px;
         }
     </style>
 </head>
-<body class="p-0 md:p-4">
+<body>
 
     <!-- 1. HALAMAN PEMBUKA (SPLASH SCREEN) -->
-    <div id="splashScreen" class="screen active justify-between p-6 sm:p-8">
-        <!-- Header Logos Only -->
-        <div class="flex justify-between items-center w-full bg-white/75 p-3 rounded-2xl border border-white/60 shadow-sm backdrop-blur-md">
+    <div id="splashScreen" class="screen active justify-between p-5 sm:p-7">
+        <!-- Header Logos -->
+        <div class="flex justify-between items-center w-full bg-slate-900/80 p-3 rounded-2xl border border-sky-500/30 shadow-md backdrop-blur-md shrink-0">
             <div class="flex items-center space-x-2">
-                <img src="https://i.imgur.com/T6aOawO.png" alt="Logo PGRI" class="w-10 h-10 object-contain drop-shadow" onerror="this.src='https://placehold.co/40x40/38bdf8/ffffff?text=PGRI'">
-                <span class="text-xs font-bold text-sky-900">PGRI Wuryantoro</span>
+                <img src="https://i.imgur.com/T6aOawO.png" alt="Logo PGRI" class="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow" onerror="this.src='https://placehold.co/40x40/38bdf8/ffffff?text=PGRI'">
+                <span class="text-[11px] sm:text-xs font-bold text-sky-200 leading-tight">Persatuan Guru Republik Indonesia</span>
             </div>
-            <div class="flex items-center space-x-2">
-                <span class="text-xs font-bold text-sky-900 text-right">Pemkab Wonogiri</span>
-                <img src="https://i.imgur.com/h8i5pWV.png" alt="Logo Pemkab Wonogiri" class="w-10 h-10 object-contain drop-shadow" onerror="this.src='https://placehold.co/40x40/a855f7/ffffff?text=WONOGIRI'">
+            <div class="flex items-center space-x-2 text-right">
+                <span class="text-[11px] sm:text-xs font-bold text-sky-200 leading-tight">Kabupaten Wonogiri</span>
+                <img src="https://i.imgur.com/h8i5pWV.png" alt="Logo Pemkab Wonogiri" class="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow" onerror="this.src='https://placehold.co/40x40/a855f7/ffffff?text=WONOGIRI'">
             </div>
         </div>
 
-        <!-- Center Branding (Shifted lower to avoid top logo crowding) -->
-        <div class="flex flex-col items-center text-center my-auto space-y-3 relative w-full pt-8">
-            <!-- Title Box (Transparent Glassmorphic & Extra Large Title) -->
-            <div class="bg-white/40 px-6 py-5 rounded-3xl backdrop-blur-md shadow-2xl border border-white/60 max-w-sm w-full transform hover:scale-105 transition duration-300">
-                <h1 class="text-5xl sm:text-7xl font-black tracking-wide bg-gradient-to-r from-sky-600 via-blue-700 to-indigo-700 bg-clip-text text-transparent drop-shadow-xl" style="line-height: 1.1;">
+        <!-- Center Branding (Without background box, glowing text style) -->
+        <div class="flex flex-col items-center text-center my-auto space-y-3 sm:space-y-4 relative w-full py-2">
+            <div class="flex flex-col items-center space-y-2 transform hover:scale-105 transition duration-300 floating">
+                <h1 class="text-4xl sm:text-6xl font-black tracking-wider bg-gradient-to-r from-sky-300 via-teal-300 to-indigo-300 bg-clip-text text-transparent drop-shadow-[0_5px_15px_rgba(56,189,248,0.5)]" style="line-height: 1.15;">
                     Gastro Galaxy
                 </h1>
-                <p class="text-slate-900 text-xs sm:text-sm font-extrabold mt-2 tracking-wider uppercase">A Journey Inside the Human Body</p>
+                <p class="text-sky-100 text-xs sm:text-sm font-extrabold tracking-widest uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">A Journey Inside the Human Body</p>
             </div>
             
-            <!-- Metadata Box (Centered text, no material label, no blue PGRI text) -->
-            <div class="bg-white/75 border border-white/70 rounded-2xl px-4 py-2.5 w-full max-w-xs text-center space-y-0.5 text-xs text-slate-800 shadow-lg backdrop-blur-md">
-                <p class="text-center font-bold text-sky-900">Erlina Fitri Hapsari</p>
-                <p class="text-center font-bold text-sky-900">Cabang PGRI Wuryantoro</p>
+            <div class="bg-slate-900/80 border border-sky-500/30 rounded-2xl px-4 py-2.5 w-full max-w-xs text-center space-y-0.5 text-xs text-sky-100 shadow-lg backdrop-blur-md mt-2">
+                <p class="text-center font-bold text-sky-300">Erlina Fitri Hapsari</p>
+                <p class="text-center font-bold text-sky-300">Cabang PGRI Wuryantoro</p>
             </div>
         </div>
 
-        <!-- Action Buttons (Compact & Centered) -->
-        <div class="flex flex-col items-center space-y-2 w-full max-w-[240px] mx-auto bg-white/75 p-3 rounded-2xl backdrop-blur-md shadow-lg border border-white/70 mb-4">
-            <button onclick="goToScreen('eduScreen'); startBGM();" class="w-full py-2.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+        <!-- Action Buttons (Shifted upward towards center) -->
+        <div class="flex flex-col items-center space-y-2.5 w-full max-w-[280px] mx-auto bg-slate-900/80 p-3.5 rounded-2xl backdrop-blur-md shadow-lg border border-sky-500/30 mb-8 shrink-0">
+            <button onclick="goToScreen('eduScreen');" class="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs sm:text-sm min-h-[46px] pulse-green">
                 <span>🚀 Mulai Petualangan</span>
             </button>
-            <button onclick="goToScreen('eduScreen'); startBGM(); setTimeout(openInstructionsTab, 100);" class="w-full py-2 px-4 bg-white/90 hover:bg-sky-50 text-sky-700 font-semibold rounded-xl border border-sky-200 transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs shadow-sm">
-                <span>📖 Petunjuk Bermain & TP</span>
+            <button onclick="goToScreen('eduScreen'); setTimeout(openInstructionsTab, 100);" class="w-full py-3 px-4 bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold rounded-xl border border-sky-500/30 transition transform active:scale-95 flex items-center justify-center space-x-2 text-xs shadow-sm min-h-[44px]">
+                <span>📖 Petunjuk & Galaksi</span>
             </button>
         </div>
     </div>
 
 
-    <!-- 2. HALAMAN EDUKASI & PENGATURAN -->
-    <div id="eduScreen" class="screen justify-between p-6 sm:p-8" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%); color: #f8fafc;">
-        <div class="flex justify-between items-center w-full">
-            <button onclick="goToScreen('splashScreen')" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center border border-white/20 text-white transition">
+    <!-- 2. HALAMAN EDUKASI & PENGATURAN LEVEL -->
+    <div id="eduScreen" class="screen justify-between p-5 sm:p-7">
+        <div class="flex justify-between items-center w-full shrink-0">
+            <button onclick="goToScreen('splashScreen')" class="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-xl flex items-center justify-center border border-white/20 text-white transition min-h-[44px] min-w-[44px]">
                 ⬅️
             </button>
-            <h2 class="text-lg font-bold text-sky-300">Pusat Edukasi & Pengaturan</h2>
+            <h2 class="text-base sm:text-lg font-bold text-sky-300">Pusat Galaksi & Pengaturan</h2>
             <div class="w-10"></div>
         </div>
 
         <!-- Scrollable Content -->
-        <div class="my-4 flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+        <div class="my-3 flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-1">
             <!-- Tabs Header -->
             <div class="flex bg-white/10 p-1 rounded-xl border border-white/20 backdrop-blur-md">
-                <button id="tabBtnGuide" onclick="switchTab('guide')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition">Cara Bermain</button>
-                <button id="tabBtnTP" onclick="switchTab('tp')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition">Tujuan Pembelajaran</button>
+                <button id="tabBtnGuide" onclick="switchTab('guide')" class="flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition min-h-[40px]">Misi Galaksi</button>
+                <button id="tabBtnTP" onclick="switchTab('tp')" class="flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition min-h-[40px]">Tujuan Pembelajaran</button>
             </div>
 
             <!-- Tab Content: Guide -->
             <div id="tabGuide" class="space-y-3 text-xs sm:text-sm text-slate-200 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-sm">
-                <h3 class="font-bold text-sky-300 text-base">☀️ Petualangan UFO Pencernaan</h3>
+                <h3 class="font-bold text-sky-300 text-base">🌌 Panduan Galaxy Challenge</h3>
                 <ul class="list-disc pl-4 space-y-2">
-                    <li><strong>Gerak Peluncur:</strong> Geser jari atau mouse ke kiri/kanan di area layar untuk menggerakkan peluncur UFO dengan bebas.</li>
-                    <li><strong>Menembak Otomatis / Tap:</strong> Ketuk layar untuk menembakkan laser ke atas.</li>
-                    <li><strong>UFO Pencernaan:</strong> Hancurkan UFO yang muncul dari segala arah dengan tembakan laser!</li>
-                    <li><strong>Kuis Kilat & Animasi:</strong> Setiap UFO yang hancur membuka soal kuis interaktif lengkap dengan ilustrasi animasi organ tubuh yang sesuai.</li>
+                    <li><strong>Misi Penjelajah:</strong> Kendalikan pesawat antariksa untuk menjelajahi 5 Level Galaksi penuh tantangan berpikir tingkat tinggi (HOTS) dengan 25 pertanyaan unik tanpa pengulangan.</li>
+                    <li><strong>Sistem Nyawa:</strong> Kamu memiliki 5 Nyawa ❤️ untuk seluruh permainan. Setiap jawaban salah mengurangi 1 nyawa. Jaga nyawamu agar tidak habis!</li>
+                    <li><strong>Otomatis Lanjut Level:</strong> Jawab 5 pertanyaan dengan benar di setiap level untuk membuka level galaksi berikutnya secara otomatis!</li>
+                    <li><strong>Koleksi UFO & UFO Emas:</strong> Tembak UFO, jawab kuis penalaran dengan benar, dan dapatkan UFO Emas untuk bonus poin luar biasa!</li>
                 </ul>
             </div>
 
             <!-- Tab Content: TP -->
             <div id="tabTP" class="hidden space-y-3 text-xs sm:text-sm text-slate-200 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 shadow-sm">
                 <h3 class="font-bold text-blue-300 text-base">🎯 Capaian Pembelajaran (CP)</h3>
-                <p>Peserta didik mengidentifikasi dan menjelaskan bagian tubuh manusia, fungsinya, serta keterkaitannya dengan cara menjaga kesehatan, termasuk sistem pencernaan dan dampaknya pada tubuh.</p>
+                <p>Peserta didik mengidentifikasi dan menjelaskan bagian tubuh manusia, fungsinya, serta keterkaitannya dengan cara menjaga kesehatan melalui penalaran analitis tingkat tinggi (HOTS).</p>
                 <ul class="list-disc pl-4 space-y-1.5 text-xs text-slate-300">
-                    <li>Mengidentifikasi organ-organ penyusun sistem pencernaan manusia dengan tepat.</li>
-                    <li>Menjelaskan fungsi masing-masing organ pencernaan manusia dengan benar.</li>
-                    <li>Menganalisis proses pencernaan dari mulut hingga pembuangan dengan urut dan logis.</li>
+                    <li>Menganalisis sistem pencernaan manusia secara mendalam dan komprehensif.</li>
+                    <li>Menyelesaikan studi kasus klinis pencernaan (maag, diare, enzim spesifik).</li>
+                    <li>Menerapkan pemahaman kesehatan pencernaan dalam skenario baru.</li>
                 </ul>
             </div>
 
             <!-- Player Info Input Section -->
             <div class="space-y-2 pt-1">
-                <label class="text-xs font-bold text-sky-200 uppercase tracking-wider">Identitas Pemain:</label>
+                <label class="text-xs font-bold text-sky-200 uppercase tracking-wider">Identitas Penjelajah:</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <input type="text" id="playerNameInput" placeholder="Nama Lengkap Siswa" class="w-full py-2.5 px-3 rounded-xl text-xs bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400">
-                    <input type="text" id="playerClassInput" placeholder="Kelas / Absen" class="w-full py-2.5 px-3 rounded-xl text-xs bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400">
+                    <input type="text" id="playerNameInput" placeholder="Nama Penjelajah" class="w-full py-3 px-3 rounded-xl text-xs bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400 min-h-[44px]">
+                    <input type="text" id="playerClassInput" placeholder="Kelas / Absen" class="w-full py-3 px-3 rounded-xl text-xs bg-white/10 border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400 min-h-[44px]">
                 </div>
             </div>
 
-            <!-- Difficulty Selector -->
-            <div class="space-y-2 pt-2">
-                <label class="text-xs font-bold text-sky-200 uppercase tracking-wider">Pilih Tingkat Kesulitan:</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="setDifficulty('easy')" id="diffEasy" class="py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition">Easy (Santai)</button>
-                    <button onclick="setDifficulty('medium')" id="diffMed" class="py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition">Medium (Normal)</button>
-                    <button onclick="setDifficulty('hard')" id="diffHard" class="py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition">Hard (Tantangan)</button>
-                </div>
-            </div>
+            <!-- Level Selector -->
+        <div class="space-y-2 pt-1">
+    <label class="text-xs font-bold text-sky-200 uppercase tracking-wider">
+        Pilih Level Galaksi:
+    </label>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="levelSelectorContainer">
+
+        <button onclick="setSelectedLevel(1)"
+            id="lvlBtn1"
+            class="p-3 rounded-xl text-xs font-bold border border-sky-400 bg-sky-900/40 text-sky-200 flex justify-between items-center transition min-h-[44px]">
+            <span>Level 1: Planet Pemula</span>
+            <span>🚀 Terbuka</span>
+        </button>
+
+        <button disabled
+            onclick="setSelectedLevel(2)"
+            id="lvlBtn2"
+            class="p-3 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 flex justify-between items-center transition min-h-[44px] opacity-60 cursor-not-allowed">
+            <span>Level 2: Sabuk Asteroid</span>
+            <span id="lvlBadge2">🔒 Terkunci</span>
+        </button>
+
+        <button disabled
+            onclick="setSelectedLevel(3)"
+            id="lvlBtn3"
+            class="p-3 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 flex justify-between items-center transition min-h-[44px] opacity-60 cursor-not-allowed">
+            <span>Level 3: Nebula Misterius</span>
+            <span id="lvlBadge3">🔒 Terkunci</span>
+        </button>
+
+        <button disabled
+            onclick="setSelectedLevel(4)"
+            id="lvlBtn4"
+            class="p-3 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 flex justify-between items-center transition min-h-[44px] opacity-60 cursor-not-allowed">
+            <span>Level 4: Planet Tantangan</span>
+            <span id="lvlBadge4">🔒 Terkunci</span>
+        </button>
+
+        <button disabled
+            onclick="setSelectedLevel(5)"
+            id="lvlBtn5"
+            class="p-3 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 flex justify-between items-center transition min-h-[44px] opacity-60 cursor-not-allowed">
+            <span>Level 5: Pusat Galaksi</span>
+            <span id="lvlBadge5">🔒 Terkunci</span>
+        </button>
+
+    </div>
+</div>
         </div>
 
-        <button onclick="startGameSession()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/30 transition transform active:scale-95 text-center text-base">
-            🚀 Mulai Misi Sekarang!
+        <button onclick="startGameSession()" class="w-full py-3.5 sm:py-4 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-500/30 transition transform active:scale-95 text-center text-sm sm:text-base shrink-0 min-h-[48px]">
+            🚀 Mulai Misi Galaksi Sekarang!
         </button>
     </div>
 
@@ -223,26 +275,31 @@
     <!-- 3. HALAMAN UTAMA PERMAINAN (GAMEPLAY) -->
     <div id="gameScreen" class="screen justify-between p-0">
         <!-- HUD Top Bar -->
-        <div class="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-4 bg-white/85 backdrop-blur-md border-b border-sky-100 text-xs sm:text-sm shadow-sm">
-            <div class="flex items-center space-x-3">
-                <div class="bg-sky-50 px-3 py-1 rounded-xl border border-sky-200 flex items-center space-x-1 shadow-sm">
-                    <span>❤️</span> <span id="hudLives" class="font-bold text-rose-500">3</span>
+        <div class="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-3 sm:p-4 bg-slate-900/90 backdrop-blur-md border-b border-sky-500/30 text-xs sm:text-sm shadow-md">
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-sky-500/30 flex items-center space-x-1 shadow-sm" title="Nyawa Pemain (5)">
+                    <span id="hudLives" class="font-bold text-rose-400">❤️❤️❤️❤️❤️</span>
                 </div>
-                <div class="bg-sky-50 px-3 py-1 rounded-xl border border-sky-200 flex items-center space-x-1 shadow-sm">
-                    <span>⭐</span> <span id="hudScore" class="font-bold text-amber-500">0</span>
+                <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-sky-500/30 flex items-center space-x-1 shadow-sm">
+                    <span>⭐</span> <span id="hudScore" class="font-bold text-amber-400">0</span>
+                </div>
+                <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-sky-500/30 flex items-center space-x-1 shadow-sm">
+                    <span>🛸</span> <span id="hudUfos" class="font-bold text-sky-400">0</span>
+                </div>
+                <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-sky-500/30 flex items-center space-x-1 shadow-sm">
+                    <span>🎯</span> <span id="hudLevelProgress" class="font-bold text-emerald-400">0/5</span>
                 </div>
             </div>
 
-            <div class="bg-sky-50 px-3 py-1 rounded-xl border border-sky-200 flex items-center space-x-1 shadow-sm">
-                <span>⏱️</span> <span id="hudTimer" class="font-bold text-sky-600">120s</span>
+            <div class="bg-slate-800 px-2.5 py-1 rounded-xl border border-sky-500/30 flex items-center space-x-1 shadow-sm hidden sm:flex">
+                <span>🪐</span> <span id="hudLevel" class="font-bold text-indigo-400">Lvl 1</span>
             </div>
 
             <div class="flex items-center space-x-2">
-                <!-- Tombol On/Off Musik di Halaman Permainan -->
-                <button id="musicToggleBtn" onclick="toggleAudio()" class="px-2.5 py-1 bg-sky-50 hover:bg-sky-100 rounded-xl border border-sky-200 flex items-center space-x-1 text-xs font-bold text-sky-800 shadow-sm">
+                <button id="musicToggleBtn" onclick="toggleAudio()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-xl border border-sky-500/30 flex items-center space-x-1 text-xs font-bold text-sky-300 shadow-sm min-h-[36px]">
                     <span id="musicToggleText">🔊 Musik On</span>
                 </button>
-                <button onclick="pauseGame()" class="w-9 h-9 bg-sky-50 hover:bg-sky-100 rounded-xl border border-sky-200 flex items-center justify-center text-base shadow-sm">⏸️</button>
+                <button onclick="pauseGame()" class="w-9 h-9 bg-slate-800 hover:bg-slate-700 rounded-xl border border-sky-500/30 flex items-center justify-center text-base shadow-sm min-h-[36px] min-w-[36px]">⏸️</button>
             </div>
         </div>
 
@@ -256,86 +313,131 @@
     </div>
 
 
-    <!-- 4. MODAL KUIS INTERAKTIF DENGAN ILUSTRASI ANIMASI -->
-    <div id="quizModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-white border border-sky-100 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4 animate-scaleUp">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <span id="quizBadge" class="bg-sky-100 text-sky-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Kuis Pencernaan</span>
-                <span id="quizTimer" class="text-xs font-bold text-amber-500">Waktu: 30s</span>
-            </div>
-            
-            <!-- Animated SVG Illustration Container -->
-            <div id="quizIllustration" class="w-full h-36 bg-gradient-to-br from-sky-50 to-blue-50 rounded-2xl border border-sky-100 flex items-center justify-center p-2">
-                <!-- Dynamic SVG injected here -->
+    <!-- 4. MODAL KUIS INTERAKTIF & HOTS -->
+    <div id="quizModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-sky-500/40 rounded-3xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-3 sm:space-y-4 animate-scaleUp max-h-[90dvh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+                <span id="quizBadge" class="bg-sky-500/20 text-sky-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-sky-500/30">Kuis Tantangan HOTS</span>
+                <span id="quizTimer" class="text-xs font-bold text-amber-400">Waktu: 30s</span>
             </div>
 
-            <h3 id="quizQuestion" class="text-base sm:text-lg font-bold text-slate-800">Pertanyaan akan muncul di sini...</h3>
+            <h3 id="quizQuestion" class="text-sm sm:text-base font-bold text-slate-100">Pertanyaan akan muncul di sini...</h3>
             
-            <div id="quizOptions" class="space-y-2.5">
+            <div id="quizOptions" class="space-y-2">
                 <!-- Dynamic Options -->
             </div>
 
-            <div id="quizExplanation" class="hidden bg-sky-50 p-3 rounded-2xl border border-sky-200 text-xs text-slate-700 space-y-1">
-                <p class="font-bold text-sky-700">💡 Pembahasan:</p>
+            <div id="quizExplanation" class="hidden bg-slate-800 p-3 rounded-2xl border border-sky-500/30 text-xs text-slate-300 space-y-1">
+                <p id="explanationTitle" class="font-bold text-sky-400">💡 Pembahasan Analitis:</p>
                 <p id="explanationText"></p>
-                <button onclick="closeQuizModal()" class="mt-2 w-full py-2 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl text-xs transition shadow-md">Lanjutkan Misi ➔</button>
+                <button onclick="dismissQuizModal()" class="mt-2 w-full py-2.5 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow-md min-h-[40px]">Lanjutkan Misi Galaksi ➔</button>
             </div>
         </div>
     </div>
 
 
-    <!-- 5. PAUSE MODAL -->
-    <div id="pauseModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-white border border-sky-100 rounded-3xl w-full max-w-sm p-6 text-center space-y-4 shadow-2xl">
-            <h3 class="text-xl font-bold text-sky-800">Game Dijeda</h3>
-            <p class="text-xs text-slate-600">Ambil napas sejenak di bawah langit cerah sebelum melanjutkan misi.</p>
+    <!-- 5. MODAL OTOMATIS SELESAI LEVEL (LEVEL UP POPUP) -->
+    <div id="levelCompleteModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-emerald-500/50 rounded-3xl w-full max-w-sm p-6 text-center space-y-4 shadow-2xl animate-scaleUp">
+            <div class="text-5xl animate-bounce">🎉</div>
+            <h3 id="levelCompleteTitle" class="text-xl font-extrabold text-emerald-300">LEVEL BERHASIL DISELESAIKAN! 🚀</h3>
+            <p id="levelCompleteDesc" class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                Kamu berhasil menjawab 5 soal dengan benar di level ini. Bersiaplah menjelajahi galaksi berikutnya dan mengumpulkan lebih banyak UFO!
+            </p>
+            <div class="pt-2">
+                <button onclick="proceedToNextLevel()" id="proceedLevelBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/30 transition text-sm min-h-[46px]">
+                    LANJUT KE LEVEL BERIKUTNYA 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 5.5 GAME OVER MODAL -->
+    <div id="gameOverModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-rose-500/60 rounded-3xl w-full max-w-sm p-6 text-center space-y-4 shadow-2xl animate-scaleUp">
+            <div class="text-5xl animate-bounce">💥</div>
+            <h3 class="text-xl font-extrabold text-rose-400">MISI BERAKHIR! 🚀</h3>
+            <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                Nyawamu telah habis. Jangan menyerah, penjelajah galaksi!
+            </p>
+            <div class="bg-slate-800 p-3 rounded-2xl border border-rose-500/30 text-xs space-y-1">
+                <p>Skor Akhir: <span id="goScore" class="font-bold text-amber-400">0</span></p>
+                <p>Total UFO: <span id="goUfos" class="font-bold text-sky-400">0</span></p>
+                <p>Level Dicapai: <span id="goLevel" class="font-bold text-indigo-400">1</span></p>
+            </div>
             <div class="space-y-2 pt-2">
-                <button onclick="resumeGame()" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-md text-sm transition">Lanjutkan Permainan</button>
-                <button onclick="quitToMenu()" class="w-full py-3 bg-sky-50 hover:bg-sky-100 text-rose-500 font-semibold rounded-xl text-sm transition border border-sky-200">Keluar ke Menu Utama</button>
+                <button onclick="restartGameFromBeginning()" class="w-full py-3.5 bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-400 hover:to-pink-500 text-white font-bold rounded-2xl shadow-lg shadow-rose-500/30 transition text-sm min-h-[46px]">
+                    🔄 COBA LAGI (DARI LEVEL 1)
+                </button>
+                <button onclick="quitToMenu()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold rounded-2xl border border-sky-500/30 transition text-sm min-h-[44px]">
+                    🏠 KEMBALI KE MENU UTAMA
+                </button>
             </div>
         </div>
     </div>
 
 
-    <!-- 6. HALAMAN HASIL (VICTORY / GAME OVER) -->
-    <div id="resultScreen" class="screen justify-between p-6 sm:p-8">
-        <div class="text-center space-y-2 pt-4">
-            <div id="resultEmoji" class="text-6xl animate-bounce">🏆</div>
-            <h2 id="resultTitle" class="text-2xl sm:text-3xl font-extrabold text-sky-800">Misi Selesai!</h2>
-            <p id="resultSubtitle" class="text-xs text-slate-600">Kerja bagus, penjelajah cilik!</p>
+    <!-- 6. PAUSE MODAL -->
+    <div id="pauseModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-sky-500/40 rounded-3xl w-full max-w-sm p-6 text-center space-y-4 shadow-2xl">
+            <h3 class="text-xl font-bold text-sky-300">Misi Galaksi Dijeda</h3>
+            <p class="text-xs text-slate-300">Ambil napas sejenak di ruang angkasa sebelum melanjutkan penjelajahan.</p>
+            <div class="space-y-2 pt-2">
+                <button onclick="resumeGame()" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-md text-sm transition min-h-[44px]">Lanjutkan Penjelajahan</button>
+                <button onclick="quitToMenu()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-rose-400 font-semibold rounded-xl text-sm transition border border-sky-500/30 min-h-[44px]">Keluar ke Menu Utama</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 7. HALAMAN HASIL (VICTORY / GAME OVER) -->
+    <div id="resultScreen" class="screen justify-between p-5 sm:p-7">
+        <div class="text-center space-y-1.5 pt-2 shrink-0">
+            <div id="resultEmoji" class="text-5xl sm:text-6xl animate-bounce">🏆</div>
+            <h2 id="resultTitle" class="text-xl sm:text-2xl font-extrabold text-sky-300">Misi Selesai!</h2>
+            <p id="resultSubtitle" class="text-xs text-slate-300">Luar biasa, Penjelajah Galaksi!</p>
         </div>
 
-        <div class="bg-sky-50/80 border border-sky-200 rounded-3xl p-5 my-4 space-y-4 shadow-sm">
-            <div class="flex justify-center space-x-2 text-3xl" id="starContainer">
+        <div class="bg-slate-900/80 border border-sky-500/30 rounded-3xl p-4 my-2 space-y-3 shadow-sm flex-1 overflow-y-auto custom-scrollbar">
+            <div class="flex justify-center space-x-2 text-2xl sm:text-3xl" id="starContainer">
                 ⭐ ⭐ ⭐
             </div>
             
-            <div class="grid grid-cols-2 gap-3 text-center">
-                <div class="bg-white p-3 rounded-2xl border border-sky-100 shadow-sm">
-                    <p class="text-xs text-slate-500">Skor Akhir</p>
-                    <p id="finalScore" class="text-2xl font-extrabold text-amber-500 mt-1">0</p>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-800 p-2.5 rounded-2xl border border-sky-500/30 shadow-sm">
+                    <p class="text-[10px] text-slate-400">Skor Akhir</p>
+                    <p id="finalScore" class="text-base sm:text-lg font-extrabold text-amber-400 mt-1">0</p>
                 </div>
-                <div class="bg-white p-3 rounded-2xl border border-sky-100 shadow-sm">
-                    <p class="text-xs text-slate-500">Kuis Terjawab</p>
-                    <p id="finalCorrect" class="text-2xl font-extrabold text-emerald-500 mt-1">0/0</p>
+                <div class="bg-slate-800 p-2.5 rounded-2xl border border-sky-500/30 shadow-sm">
+                    <p class="text-[10px] text-slate-400">Total UFO</p>
+                    <p id="finalUfos" class="text-base sm:text-lg font-extrabold text-sky-400 mt-1">0</p>
                 </div>
+                <div class="bg-slate-800 p-2.5 rounded-2xl border border-sky-500/30 shadow-sm">
+                    <p class="text-[10px] text-slate-400">Kuis Benar</p>
+                    <p id="finalCorrect" class="text-base sm:text-lg font-extrabold text-emerald-400 mt-1">0/0</p>
+                </div>
+            </div>
+
+            <div id="badgeRewardBox" class="bg-gradient-to-r from-amber-500/20 to-indigo-500/20 p-3 rounded-2xl border border-amber-500/40 text-center text-xs text-amber-300 font-bold hidden">
+                🏅 Gelar Diraih: Master Penjelajah Galaksi!
             </div>
 
             <!-- Spreadsheet Sync Status Box -->
-            <div id="sheetStatusBox" class="bg-white p-3 rounded-2xl border border-sky-100 text-center text-xs text-slate-600 shadow-sm">
-                <p id="sheetStatusText">📤 Menyimpan data ke Google Spreadsheet...</p>
+            <div id="sheetStatusBox" class="bg-slate-800 p-2.5 rounded-2xl border border-sky-500/30 text-center text-xs text-slate-300 shadow-sm">
+                <p id="sheetStatusText">📤 Menyimpan progres ke Google Spreadsheet...</p>
             </div>
 
-            <div class="bg-white p-3 rounded-2xl border border-sky-100 max-h-32 overflow-y-auto custom-scrollbar text-xs space-y-2 shadow-sm" id="evaluationList">
+            <div class="bg-slate-800 p-3 rounded-2xl border border-sky-500/30 max-h-28 overflow-y-auto custom-scrollbar text-xs space-y-2 shadow-sm" id="evaluationList">
                 <!-- Evaluation summary items -->
             </div>
         </div>
 
-        <div class="space-y-3 w-full pb-2">
-            <button onclick="restartGame()" class="w-full py-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-500/30 transition text-sm">
-                🔄 Main Lagi
+        <div class="space-y-2.5 w-full pb-1 shrink-0">
+            <button onclick="nextLevelOrRestart()" id="nextLevelBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/30 transition text-sm min-h-[44px]">
+                🚀 Lanjut Level Berikutnya
             </button>
-            <button onclick="goToScreen('splashScreen')" class="w-full py-3 bg-sky-50 hover:bg-sky-100 text-sky-700 font-semibold rounded-2xl border border-sky-200 transition text-sm">
+            <button onclick="goToScreen('splashScreen')" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold rounded-2xl border border-sky-500/30 transition text-sm min-h-[44px]">
                 🏠 Keluar ke Menu Utama
             </button>
         </div>
@@ -345,12 +447,12 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // --- GOOGLE SPREADSHEET CONFIGURATION ---
-        const GOOGLE_SHEET_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT";
+        const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxWqqW7nG6KDay9sQzthS6LDQLGWxMyTeRdPi89CZ7ISkkpcwF-I1_mGGYNEVrQscbx/exec"; // Replace with your deployed Web App URL
 
         function sendDataToGoogleSheet(data) {
             const statusText = document.getElementById('sheetStatusText');
-            if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-                statusText.textContent = "ℹ️ Google Spreadsheet belum dikonfigurasi.";
+            if (!GOOGLE_SHEET_WEB_APP_URL || GOOGLE_SHEET_WEB_APP_URL.includes("AKfycbwYy...")) {
+                statusText.textContent = "ℹ️ Google Spreadsheet belum dikonfigurasi (Masukkan URL Web App Anda).";
                 return;
             }
 
@@ -366,13 +468,67 @@
             })
             .then(() => {
                 statusText.textContent = "✅ Data berhasil tersimpan di Google Spreadsheet!";
-                statusText.className = "text-emerald-600 font-bold";
+                statusText.className = "text-emerald-400 font-bold";
             })
             .catch((error) => {
                 console.error("Error saving to sheet:", error);
                 statusText.textContent = "⚠️ Gagal menyimpan ke Spreadsheet (Cek koneksi).";
-                statusText.className = "text-rose-500 font-semibold";
+                statusText.className = "text-rose-400 font-semibold";
             });
+        }
+
+        // --- LOCAL STORAGE PROGRES ---
+        let gameProgress = JSON.parse(localStorage.getItem('gastro_galaxy_progress')) || {
+            maxLevelUnlocked: 1,
+            totalUfos: 0,
+            highScore: 0
+        };
+
+        // Ensure maxLevelUnlocked is at least 1, and levels 2-5 are locked initially
+        if (!gameProgress.maxLevelUnlocked || gameProgress.maxLevelUnlocked < 1) {
+            gameProgress.maxLevelUnlocked = 1;
+        }
+
+        function saveProgressToLocalStorage() {
+            localStorage.setItem('gastro_galaxy_progress', JSON.stringify(gameProgress));
+        }
+
+        function updateLevelSelectorUI() {
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById(`lvlBtn${i}`);
+                if (!btn) continue;
+                if (i <= gameProgress.maxLevelUnlocked) {
+                    btn.className = (selectedLevel === i) 
+                        ? "p-3 rounded-xl text-xs font-bold border border-sky-400 bg-sky-900/40 text-sky-200 flex justify-between items-center transition min-h-[44px]"
+                        : "p-3 rounded-xl text-xs font-bold border border-sky-500/30 bg-slate-800 text-sky-300 flex justify-between items-center transition min-h-[44px]";
+                    btn.innerHTML = `<span>Level ${i}: ${getLevelName(i)}</span> <span>🟢 Terbuka</span>`;
+                } else {
+                    btn.className = "p-3 rounded-xl text-xs font-bold border border-white/10 bg-slate-900/50 text-slate-500 flex justify-between items-center transition min-h-[44px] cursor-not-allowed";
+                    btn.innerHTML = `<span>Level ${i}: ${getLevelName(i)}</span> <span>🔒 Terkunci</span>`;
+                }
+            }
+        }
+
+        function getLevelName(lvl) {
+            switch(lvl) {
+                case 1: return "Planet Pemula";
+                case 2: return "Sabuk Asteroid";
+                case 3: return "Nebula Misterius";
+                case 4: return "Planet Tantangan";
+                case 5: return "Pusat Galaksi";
+                default: return "Galaksi Baru";
+            }
+        }
+
+        let selectedLevel = 1;
+        function setSelectedLevel(lvl) {
+            if (lvl <= gameProgress.maxLevelUnlocked) {
+                selectedLevel = lvl;
+                playSound('click');
+                updateLevelSelectorUI();
+            } else {
+                playSound('wrong');
+            }
         }
 
         // --- AUDIO ENGINE ---
@@ -422,8 +578,8 @@
                 osc.stop(now + 0.08);
             } else if (type === 'pop') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(700, now + 0.12);
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(900, now + 0.12);
                 gain.gain.setValueAtTime(0.4, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
                 osc.start(now);
@@ -465,7 +621,7 @@
         function startBGM() {
             if (bgmInterval || !soundEnabled) return;
             initAudio();
-            const melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 440.00, 493.88];
+            const melody = [220.00, 261.63, 329.63, 392.00, 440.00, 392.00, 329.63, 261.63];
             let noteIdx = 0;
 
             bgmInterval = setInterval(() => {
@@ -479,15 +635,15 @@
 
                     osc.type = 'triangle';
                     osc.frequency.setValueAtTime(melody[noteIdx], now);
-                    gain.gain.setValueAtTime(0.28, now);
-                    gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                    gain.gain.setValueAtTime(0.22, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
 
                     osc.start(now);
-                    osc.stop(now + 0.3);
+                    osc.stop(now + 0.35);
 
                     noteIdx = (noteIdx + 1) % melody.length;
                 } catch(e) {}
-            }, 350);
+            }, 400);
         }
 
         function stopBGM() {
@@ -497,37 +653,32 @@
             }
         }
 
-        // --- DIFFICULTY CONFIGURATION ---
-        let difficulty = 'easy';
-        let playerName = 'Penjelajah Cilik';
-        let playerClass = 'Kelas 5';
-        const diffConfig = {
-            easy: { timer: 120, spawnRate: 90, maxBalloons: 4, speedMultiplier: 1.0 },
-            medium: { timer: 120, spawnRate: 70, maxBalloons: 6, speedMultiplier: 1.3 },
-            hard: { timer: 120, spawnRate: 50, maxBalloons: 8, speedMultiplier: 1.6 }
+        // --- LEVEL CONFIGURATION (GALAXY CHALLENGE) ---
+        const levelConfigs = {
+            1: { name: "Planet Pemula", timer: 120, spawnRate: 90, maxUfos: 4, speedMul: 1.0 },
+            2: { name: "Sabuk Asteroid", timer: 110, spawnRate: 75, maxUfos: 5, speedMul: 1.25 },
+            3: { name: "Nebula Misterius", timer: 100, spawnRate: 60, maxUfos: 6, speedMul: 1.5 },
+            4: { name: "Planet Tantangan", timer: 90, spawnRate: 50, maxUfos: 7, speedMul: 1.8 },
+            5: { name: "Pusat Galaksi", timer: 80, spawnRate: 40, maxUfos: 8, speedMul: 2.1 }
         };
 
-        function setDifficulty(level) {
-            difficulty = level;
-            playSound('click');
-            document.getElementById('diffEasy').className = level === 'easy' 
-                ? "py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition"
-                : "py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition";
-            document.getElementById('diffMed').className = level === 'medium' 
-                ? "py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition"
-                : "py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition";
-            document.getElementById('diffHard').className = level === 'hard' 
-                ? "py-3 px-2 rounded-xl text-xs font-bold border border-emerald-400 bg-emerald-900/40 text-emerald-300 shadow-sm transition"
-                : "py-3 px-2 rounded-xl text-xs font-bold border border-white/20 bg-white/5 text-slate-300 transition";
-        }
+        let playerName = 'Penjelajah Galaksi';
+        let playerClass = 'Kelas 5';
+        let currentUfosCollected = 0;
+        let currentStreak = 0;
+        let levelCorrectCount = 0; // Tracks correct answers per level (target 5)
+        let lives = 5; // Persistent 5 lives across all levels
 
-        // --- NAVIGASI LAYAR ---
         function goToScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             
             if (soundEnabled && !bgmInterval) {
                 startBGM();
+            }
+
+            if(screenId === 'eduScreen') {
+                updateLevelSelectorUI();
             }
 
             if(screenId === 'gameScreen') {
@@ -545,13 +696,19 @@
             if (classInput && classInput.value.trim() !== '') playerClass = classInput.value.trim();
 
             score = 0;
-            lives = 3;
+            lives = 5; // Start with exactly 5 lives
+            currentUfosCollected = 0;
+            currentStreak = 0;
+            levelCorrectCount = 0;
             questionsAnsweredCount = 0;
             correctAnswersCount = 0;
             evaluationLog = [];
             balloons = [];
             projectiles = [];
-            timeLeft = diffConfig[difficulty].timer;
+            timeLeft = levelConfigs[selectedLevel].timer;
+
+            // Reset used questions tracking for this level session
+            levelUsedQuestions[selectedLevel] = [];
 
             goToScreen('gameScreen');
             updateHUD();
@@ -569,9 +726,16 @@
         }
 
         function updateHUD() {
-            document.getElementById('hudLives').textContent = lives;
+            // Render 5 heart icons dynamically based on remaining lives
+            let heartsStr = '';
+            for (let i = 0; i < 5; i++) {
+                heartsStr += (i < lives) ? '❤️' : '🖤';
+            }
+            document.getElementById('hudLives').textContent = heartsStr;
             document.getElementById('hudScore').textContent = score;
-            document.getElementById('hudTimer').textContent = timeLeft + 's';
+            document.getElementById('hudUfos').textContent = currentUfosCollected;
+            document.getElementById('hudLevel').textContent = `Lvl ${selectedLevel}`;
+            document.getElementById('hudLevelProgress').textContent = `${levelCorrectCount}/5`;
         }
 
         function pauseGame() {
@@ -592,10 +756,13 @@
             gamePaused = false;
             stopCanvasGame();
             document.getElementById('pauseModal').classList.add('hidden');
+            document.getElementById('levelCompleteModal').classList.remove('flex');
+            document.getElementById('levelCompleteModal').classList.add('hidden');
+            document.getElementById('gameOverModal').classList.remove('flex');
+            document.getElementById('gameOverModal').classList.add('hidden');
             goToScreen('splashScreen');
         }
 
-        // --- TABS SWITCHER ---
         function switchTab(tabName) {
             playSound('click');
             const guideTab = document.getElementById('tabGuide');
@@ -606,13 +773,13 @@
             if (tabName === 'guide') {
                 guideTab.classList.remove('hidden');
                 tpTab.classList.add('hidden');
-                guideBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition";
-                tpBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition";
+                guideBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition min-h-[40px]";
+                tpBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition min-h-[40px]";
             } else {
                 guideTab.classList.add('hidden');
                 tpTab.classList.remove('hidden');
-                tpBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition";
-                guideBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition";
+                tpBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-sky-500 text-white shadow-sm transition min-h-[40px]";
+                guideBtn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-slate-300 transition min-h-[40px]";
             }
         }
 
@@ -620,518 +787,385 @@
             switchTab('guide');
         }
 
-        // --- COMPREHENSIVE QUIZ BANK (60 QUESTIONS: 20 EASY, 20 MEDIUM, 20 HARD) ---
-        const quizBanks = {
-            easy: [
+        // --- EXCLUSIVE 5 UNIQUE QUESTIONS PER LEVEL (NO REPETITION) ---
+        const levelQuestionBanks = {
+            1: [ // Level 1: Planet Pemula
                 {
-                    topic: "Mulut",
-                    question: "Organ pertama yang bertugas menerima makanan masuk ke dalam tubuh manusia adalah...",
-                    options: ["Kerongkongan", "Mulut", "Lambung", "Usus Halus"],
-                    answer: 1,
-                    explanation: "Makanan pertama kali masuk melalui mulut, di mana proses pencernaan mekanik dan kimiawi dimulai.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="45" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><path d="M75 75 Q100 95 125 75" fill="none" stroke="#dc2626" stroke-width="4" stroke-linecap="round"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Organ Mulut</text></svg>`
-                },
-                {
-                    topic: "Gigi",
-                    question: "Alat pencernaan mekanik di dalam mulut yang berfungsi memotong dan menghaluskan makanan adalah...",
-                    options: ["Lidah", "Gigi", "Air liur", "Kerongkongan"],
-                    answer: 1,
-                    explanation: "Gigi memotong, merobek, dan mengunyah makanan secara mekanik agar berukuran lebih kecil.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="75" y="30" width="50" height="60" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Manusia</text></svg>`
-                },
-                {
-                    topic: "Lidah",
-                    question: "Selain membantu mengecap rasa, lidah di dalam mulut berfungsi untuk...",
-                    options: ["Menelan dan mendorong makanan", "Memompa darah", "Menghasilkan asam lambung", "Menyaring udara"],
+                    id: 101,
+                    topic: "Mulut & Enzim Ptialin",
+                    question: "Mengapa makanan yang dikunyah lama di dalam mulut terasa sedikit manis? Analisis proses apa yang terjadi!",
+                    options: [
+                        "Enzim ptialin mengubah amilum (karbohidrat) menjadi zat gula sederhana.",
+                        "Gigi mengeluarkan zat pemanis alami saat ditekan.",
+                        "Lidah menghasilkan glukosa murni secara otomatis.",
+                        "Asam lambung naik ke mulut memberikan rasa manis."
+                    ],
                     answer: 0,
-                    explanation: "Lidah membantu mengatur letak makanan saat dikunyah serta mendorong makanan masuk ke kerongkongan.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M70 60 Q100 20 130 60 Q130 90 100 90 Q70 90 70 60 Z" fill="#f43f5e" stroke="#be123c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#be123c">Fungsi Lidah</text></svg>`
+                    explanation: "Enzim ptialin (amilase) di air liur melakukan pencernaan kimiawi dengan memecah amilum menjadi maltosa (gula sederhana)."
                 },
                 {
-                    topic: "Kerongkongan",
-                    question: "Saluran berbentuk pipa yang menghubungkan mulut dengan lambung disebut...",
-                    options: ["Tenggorokan", "Kerongkongan", "Usus", "Pankreas"],
-                    answer: 1,
-                    explanation: "Kerongkongan (esofagus) adalah saluran khusus makanan menuju lambung.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="85" y="15" width="30" height="90" rx="15" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#9a3412">Kerongkongan</text></svg>`
-                },
-                {
-                    topic: "Lambung",
-                    question: "Organ pencernaan berbentuk seperti kantung yang terletak di dalam rongga perut sebelah kiri atas adalah...",
-                    options: ["Hati", "Lambung", "Usus Besar", "Anus"],
-                    answer: 1,
-                    explanation: "Lambung berfungsi menampung dan mencerna makanan secara kimiawi dengan getah lambung.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 C140 70 145 40 120 30 Z" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Lambung</text></svg>`
-                },
-                {
-                    topic: "Usus Halus",
-                    question: "Tempat utama terjadinya penyerapan sari-sari makanan ke dalam tubuh adalah...",
-                    options: ["Usus Halus", "Usus Besar", "Lambung", "Kerongkongan"],
+                    id: 102,
+                    topic: "Fungsi Gigi Geraham",
+                    question: "Manakah struktur gigi manusia yang memiliki fungsi utama untuk melumatkan dan menghaluskan makanan sebelum ditelan?",
+                    options: ["Gigi geraham", "Gigi seri", "Gigi taring", "Gusi"],
                     answer: 0,
-                    explanation: "Usus halus menyerap nutrisi makanan agar dapat diedarkan oleh darah ke seluruh tubuh.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 40 Q75 10 100 40 T150 40 T100 80 T50 40" fill="none" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Usus Halus</text></svg>`
+                    explanation: "Gigi geraham memiliki permukaan yang luas dan bergelombang, dirancang khusus untuk menggiling dan melumatkan makanan."
                 },
                 {
-                    topic: "Usus Besar",
-                    question: "Sisa pencernaan yang sudah tidak diserap nutrisinya akan masuk ke...",
-                    options: ["Usus Besar", "Lambung", "Hati", "Jantung"],
+                    id: 103,
+                    topic: "Kerongkongan & Peristaltik",
+                    question: "Meskipun kita makan sambil berdiri bahkan dalam posisi terbalik, makanan tetap bisa masuk ke lambung. Apa nama gerakan otot ini?",
+                    options: ["Gerak peristaltik", "Gerak lokomotor", "Gerak refleks pupil", "Gerak gravitasi murni"],
                     answer: 0,
-                    explanation: "Usus besar menerima sisa makanan dari usus halus untuk diserap kadar airnya.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="25" width="80" height="70" rx="15" fill="none" stroke="#10b981" stroke-width="14"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Usus Besar</text></svg>`
+                    explanation: "Gerak peristaltik adalah kontraksi dan relaksasi otot polos dinding kerongkongan secara bergelombang."
                 },
                 {
-                    topic: "Anus",
-                    question: "Lubang tempat pembuangan akhir sisa pencernaan (feses) keluar dari tubuh dinamakan...",
-                    options: ["Anus", "Rektum", "Uretra", "Mulut"],
+                    id: 104,
+                    topic: "Fungsi Air Liur",
+                    question: "Selain enzim pencernaan, apa fungsi penting air liur (saliva) dalam rongga mulut saat kita mengonsumsi makanan kering?",
+                    options: [
+                        "Membasahi dan melumasi makanan agar mudah ditelan",
+                        "Membunuh seluruh kuman di dalam lambung",
+                        "Menyerap air langsung ke pembuluh darah kepala",
+                        "Mencegah gigi berlubang selamanya"
+                    ],
                     answer: 0,
-                    explanation: "Anus adalah pintu keluar akhir tempat feses dikeluarkan dari tubuh.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="55" r="28" fill="#cbd5e1" stroke="#475569" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#334155">Anus</text></svg>`
+                    explanation: "Air liur melembabkan makanan kering dan membentuk bolus agar licin saat melalui kerongkongan."
                 },
                 {
-                    topic: "Hati",
-                    question: "Kelenjar terbesar di dalam tubuh manusia yang menghasilkan cairan empedu adalah...",
-                    options: ["Hati", "Pankreas", "Lambung", "Usus"],
+                    id: 105,
+                    topic: "Organ Awal Pencernaan",
+                    question: "Urutan organ pertama yang dilewati oleh makanan padat saat masuk ke dalam tubuh manusia adalah...",
+                    options: [
+                        "Rongga mulut ➔ Kerongkongan ➔ Lambung",
+                        "Lambung ➔ Usus halus ➔ Anus",
+                        "Kerongkongan ➔ Tenggorokan ➔ Hati",
+                        "Usus besar ➔ Lambung ➔ Mulut"
+                    ],
                     answer: 0,
-                    explanation: "Hati menghasilkan cairan empedu yang berperan penting dalam pencernaan lemak.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M45 45 C50 20 120 20 150 45 C170 65 140 95 90 90 Z" fill="#fb7185" stroke="#e11d48" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#be123c">Hati</text></svg>`
-                },
-                {
-                    topic: "Air Liur",
-                    question: "Cairan yang dihasilkan di dalam mulut untuk melembapkan makanan disebut...",
-                    options: ["Air liur (Saliva)", "Asam klorida", "Empedu", "Urin"],
-                    answer: 0,
-                    explanation: "Air liur mengandung enzim ptialin yang melembutkan makanan dan memulai pencernaan karbohidrat.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="30" fill="#bae6fd" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Air Liur / Saliva</text></svg>`
-                },
-                {
-                    topic: "Pencernaan",
-                    question: "Proses memecah makanan dari ukuran besar menjadi lebih kecil dan halus disebut...",
-                    options: ["Pencernaan makanan", "Pernapasan", "Peredaran darah", "Ekskresi"],
-                    answer: 0,
-                    explanation: "Sistem pencernaan mengubah makanan kompleks menjadi zat sederhana yang siap diserap tubuh.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="65" y="35" width="70" height="50" rx="10" fill="#fde047" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Proses Pencernaan</text></svg>`
-                },
-                {
-                    topic: "Kesehatan",
-                    question: "Agar organ pencernaan tetap sehat, kita sebaiknya makan makanan yang...",
-                    options: ["Bersih dan bergizi seimbang", "Mentah dan kotor", "Terlalu pedas setiap hari", "Mengandung bahan pengawet kimia"],
-                    answer: 0,
-                    explanation: "Makanan bersih dan bergizi seimbang menjaga kesehatan seluruh saluran pencernaan kita.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="35" fill="#bbf7d0" stroke="#16a34a" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Makanan Sehat</text></svg>`
-                },
-                {
-                    topic: "Air Putih",
-                    question: "Minum air putih yang cukup setiap hari sangat membantu kelancaran...",
-                    options: ["Pencernaan", "Pendengaran", "Penglihatan", "Penciuman"],
-                    answer: 0,
-                    explanation: "Air putih membantu melancarkan kerja usus besar dalam menyerap air dan mencegah sembelit.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="85" y="25" width="30" height="70" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Air Putih</text></svg>`
-                },
-                {
-                    topic: "Serat",
-                    question: "Buah-buahan dan sayuran sangat baik bagi pencernaan karena kaya akan kandungan...",
-                    options: ["Serat", "Plastik", "Minyak jelantah", "Besi baja"],
-                    answer: 0,
-                    explanation: "Serat makanan membantu melancarkan buang air besar dan mencegah sembelit.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#fed7aa" stroke="#ea580c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Buah & Sayur (Serat)</text></svg>`
-                },
-                {
-                    topic: "Sembelit",
-                    question: "Kesulitan buang air besar karena kurang makan berserat disebut...",
-                    options: ["Sembelit (Konstipasi)", "Diare", "Maag", "Tipes"],
-                    answer: 0,
-                    explanation: "Sembelit terjadi ketika feses terlalu keras akibat kurangnya asupan serat dan air.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Sembelit</text></svg>`
-                },
-                {
-                    topic: "Cuci Tangan",
-                    question: "Sebelum makan, kita diwajibkan untuk mencuci tangan menggunakan sabun agar...",
-                    options: ["Kuman penyakit tidak masuk ke dalam tubuh", "Tangan menjadi wangi bunga", "Makanan cepat habis", "Tangan menjadi licin"],
-                    answer: 0,
-                    explanation: "Mencuci tangan membunuh kuman dan bakteri agar tidak ikut tertelan saat makan.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Cuci Tangan Sabun</text></svg>`
-                },
-                {
-                    topic: "Mengunyah",
-                    question: "Mengunyah makanan secara perlahan dan lembut di mulut bertujuan agar...",
-                    options: ["Makanan lebih mudah dicerna oleh organ selanjutnya", "Makanan cepat basi", "Gigi cepat tanggal", "Perut terasa sakit"],
-                    answer: 0,
-                    explanation: "Makanan yang dikunyah halus meringankan kerja lambung dalam mencerna makanan.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="75" y="40" width="50" height="40" rx="8" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Mengunyah Halus</text></svg>`
-                },
-                {
-                    topic: "Lambung Sehat",
-                    question: "Kebiasaan terlambat makan dapat memicu gangguan kesehatan pada organ...",
-                    options: ["Lambung", "Jantung", "Paru-paru", "Ginjal"],
-                    answer: 0,
-                    explanation: "Terlambat makan membuat asam lambung melukai dinding lambung (penyakit maag).",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fecaca" stroke="#ef4444" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Kesehatan Lambung</text></svg>`
-                },
-                {
-                    topic: "Vitamin",
-                    question: "Zat gizi penting yang banyak terkandung dalam sayuran hijau dan buah segar adalah...",
-                    options: ["Vitamin dan Mineral", "Bensin", "Plastik", "Besi beton"],
-                    answer: 0,
-                    explanation: "Vitamin dan mineral menjaga fungsi organ tubuh dan sistem kekebalan tubuh.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#d9f99d" stroke="#65a30d" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#4d7c0f">Vitamin & Mineral</text></svg>`
-                },
-                {
-                    topic: "Gigi Sehat",
-                    question: "Agar gigi tetap kuat dan tidak berlubang, kita harus rajin...",
-                    options: ["Menggosok gigi secara teratur", "Makan permen setiap jam", "Membiarkan sisa makanan menempel", "Tidak pernah berkumur"],
-                    answer: 0,
-                    explanation: "Menggosok gigi membersihkan sisa makanan penyebab gigi berlubang.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="75" y="35" width="50" height="50" rx="8" fill="#ffffff" stroke="#0ea5e9" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0284c7">Gosok Gigi Rutin</text></svg>`
+                    explanation: "Pencernaan dimulai dari rongga mulut, kemudian makanan didorong melalui kerongkongan menuju lambung."
                 }
             ],
-            medium: [
+            2: [ // Level 2: Sabuk Asteroid
                 {
-                    topic: "Enzim Ptialin",
-                    question: "Enzim ptialin (amilase) yang dihasilkan di dalam mulut berfungsi untuk mengubah...",
-                    options: ["Karbohidrat (amilum) menjadi zat gula sederhana", "Lemak menjadi asam lemak", "Protein menjadi asam amino", "Vitamin menjadi mineral"],
+                    id: 201,
+                    topic: "Lambung & Asam HCl",
+                    question: "Lambung menghasilkan asam klorida (HCl) yang sangat asam. Mengapa dinding lambung tidak ikut hancur oleh asam tersebut?",
+                    options: [
+                        "Dinding lambung dilindungi oleh lapisan lendir (mukus) tebal.",
+                        "Asam HCl dinetralkan oleh air liur setiap detik.",
+                        "Lambung tidak memiliki sel hidup sehingga kebal asam.",
+                        "Empedu selalu melapisi lambung dari dalam."
+                    ],
                     answer: 0,
-                    explanation: "Enzim ptialin melakukan pencernaan kimiawi pertama di mulut dengan mengubah amilum menjadi glukosa.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="38" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Enzim Ptialin / Amilase</text></svg>`
+                    explanation: "Lapisan mukus (lendir) yang melapisi dinding lambung bertindak sebagai perisai pelindung terhadap cairan asam lambung."
                 },
                 {
-                    topic: "Gerak Peristaltik",
-                    question: "Gerakan meremas dan mendorong makanan yang terjadi pada dinding kerongkongan disebut...",
-                    options: ["Gerak peristaltik", "Gerak lokomotor", "Gerak refleks", "Gerak rotasi"],
-                    answer: 0,
-                    explanation: "Otot kerongkongan berkontraksi secara bergelombang (peristaltik) untuk mendorong makanan ke lambung.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="85" y="15" width="30" height="90" rx="15" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><path d="M80 50 Q100 60 120 50" fill="none" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#9a3412">Gerak Peristaltik</text></svg>`
-                },
-                {
-                    topic: "Getah Lambung",
-                    question: "Getah lambung terdiri atas asam klorida (HCl) serta enzim...",
-                    options: ["Pepsin, renin, dan lipase", "Ptialin dan amilase", "Pankreatin dan tripsin", "Ptyalin dan maltase"],
-                    answer: 0,
-                    explanation: "Lambung menghasilkan HCl, pepsin (memecah protein), renin (menggumpalkan susu), dan lipase lambung.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Getah Lambung</text></svg>`
-                },
-                {
-                    topic: "Fungsi HCl",
-                    question: "Asam klorida (HCl) yang terdapat di dalam lambung memiliki fungsi utama untuk...",
-                    options: ["Membunuh kuman penyakit dan mengaktifkan pepsin", "Mencerna seluruh lemak", "Menyerap sari makanan", "Menghasilkan vitamin K"],
-                    answer: 0,
-                    explanation: "HCl membunuh bakteri patogen yang terbawa makanan dan menciptakan suasana asam untuk enzim pepsin.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="35" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Asam Klorida (HCl)</text></svg>`
-                },
-                {
-                    topic: "Bagian Usus Halus",
-                    question: "Usus halus manusia terdiri atas tiga bagian utama, yaitu...",
-                    options: ["Duodenum, jejunum, dan ileum", "Kolon, sekum, dan rektum", "Kardiak, fundus, dan pilorus", "Enamel, dentin, dan pulpa"],
-                    answer: 0,
-                    explanation: "Tiga bagian usus halus adalah usus 12 jari (duodenum), usus kosong (jejunum), dan usus penyerapan (ileum).",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 40 Q75 10 100 40 T150 40" fill="none" stroke="#38bdf8" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Duodenum, Jejunum, Ileum</text></svg>`
-                },
-                {
-                    topic: "Vili Usus Halus",
-                    question: "Permukaan dalam usus halus berlipat-lipat dan memiliki jonjot usus (vili) yang berfungsi untuk...",
-                    options: ["Memperluas bidang penyerapan sari makanan", "Membuat makanan berputar", "Menghasilkan asam lambung", "Menyimpan udara"],
-                    answer: 0,
-                    explanation: "Vili (jonjot usus) memperluas area penyerapan nutrisi agar masuk ke aliran darah secara efisien.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="50" r="15" fill="#0284c7"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Jonjot Usus (Vili)</text></svg>`
-                },
-                {
-                    topic: "Pankreas",
-                    question: "Kelenjar pankreas menghasilkan getah pankreas yang disalurkan ke usus 12 jari. Getah ini mengandung enzim...",
-                    options: ["Amilase, tripsin, dan lipase", "Ptialin dan pepsin", "Renin dan HCl", "Ptyalin murni"],
-                    answer: 0,
-                    explanation: "Pankreas menghasilkan amilase (karbohidrat), tripsin (protein), dan lipase (lemak).",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="65" y="45" width="70" height="30" rx="10" fill="#fde047" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Kelenjar Pankreas</text></svg>`
-                },
-                {
-                    topic: "Cairan Empedu",
-                    question: "Cairan empedu yang dihasilkan oleh hati memiliki fungsi khusus untuk...",
-                    options: ["Mengemulsikan (memecah) lemak", "Membunuh seluruh sel darah putih", "Menghasilkan vitamin A", "Membentuk energi instan"],
-                    answer: 0,
-                    explanation: "Empedu memecah butiran lemak besar menjadi emulsi lemak kecil agar mudah dicerna enzim lipase.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><ellipse cx="100" cy="60" rx="30" ry="18" fill="#facc15" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Cairan Empedu</text></svg>`
-                },
-                {
-                    topic: "Bakteri E. coli",
-                    question: "Di dalam usus besar manusia terdapat bakteri baik bernama Escherichia coli (E. coli) yang membantu...",
-                    options: ["Membusukkan sisa makanan dan membentuk vitamin K", "Menyerap seluruh racun tubuh", "Menghasilkan asam lambung", "Membuat gigi kuat"],
-                    answer: 0,
-                    explanation: "Bakteri E. coli membantu proses pembusukan sisa makanan serta mensintesis vitamin K.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#a7f3d0" stroke="#059669" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Bakteri E. coli</text></svg>`
-                },
-                {
-                    topic: "Pencernaan Kimiawi",
-                    question: "Pencernaan kimiawi adalah proses perombakan makanan dengan bantuan...",
-                    options: ["Enzim atau zat kimia tubuh", "Gigi dan lidah", "Otot lambung", "Gerak peristaltik"],
-                    answer: 0,
-                    explanation: "Pencernaan kimiawi melibatkan enzim pencernaan yang mengubah zat makanan menjadi molekul sederhana.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Pencernaan Kimiawi</text></svg>`
-                },
-                {
-                    topic: "Pencernaan Mekanik",
-                    question: "Pencernaan mekanik adalah proses mengubah bentuk makanan dari besar menjadi kecil yang melibatkan...",
-                    options: ["Gigi, lidah, dan gerakan otot saluran pencernaan", "Hanya enzim lambung", "Bakteri usus halus", "Getah empedu"],
-                    answer: 0,
-                    explanation: "Pencernaan mekanik terjadi di mulut (oleh gigi) dan di lambung/usus (oleh kontraksi otot).",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Pencernaan Mekanik</text></svg>`
-                },
-                {
-                    topic: "Penyakit Maag",
-                    question: "Penyakit maag (gastritis) ditandai dengan rasa perih di lambung yang biasanya disebabkan oleh...",
-                    options: ["Produksi asam lambung berlebih akibat pola makan tidak teratur", "Terlalu banyak makan buah segar", "Kurang minum air putih", "Kebiasaan rajin olahraga"],
-                    answer: 0,
-                    explanation: "Pola makan tidak teratur membuat asam lambung melukai dinding lambung.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Penyakit Maag</text></svg>`
-                },
-                {
-                    topic: "Penyakit Diare",
-                    question: "Diare adalah gangguan pencernaan di mana feses berair akibat infeksi atau iritasi pada...",
-                    options: ["Usus besar", "Kerongkongan", "Gigi", "Kelenjar air liur"],
-                    answer: 0,
-                    explanation: "Diare terjadi ketika usus besar gagal menyerap air secara normal karena infeksi bakteri/virus.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="30" width="80" height="60" rx="15" fill="none" stroke="#f59e0b" stroke-width="10"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b45309">Gangguan Diare</text></svg>`
-                },
-                {
-                    topic: "Usus Buntu (Appendiks)",
-                    question: "Organ tambahan berbentuk seperti cacing kecil yang terhubung pada usus besar disebut...",
-                    options: ["Usus buntu (appendix)", "Pankreas", "Empedu", "Duodenum"],
-                    answer: 0,
-                    explanation: "Usus buntu terletak di dekat pertemuan usus halus dan usus besar.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="28" fill="#a7f3d0" stroke="#059669" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Usus Buntu</text></svg>`
-                },
-                {
-                    topic: "Fungsi Usus Besar",
-                    question: "Selain menyerap air, usus besar juga berfungsi untuk...",
-                    options: ["Membusukkan sisa makanan menjadi feses", "Mencerna protein nabati", "Menghasilkan sel darah merah", "Memompa cairan empedu"],
-                    answer: 0,
-                    explanation: "Usus besar memadatkan sisa makanan menjadi feses sebelum dikeluarkan melalui rektum dan anus.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="25" width="80" height="70" rx="15" fill="none" stroke="#10b981" stroke-width="14"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Fungsi Usus Besar</text></svg>`
-                },
-                {
-                    topic: "Urutan Saluran",
-                    question: "Urutan perjalanan makanan yang benar pada sistem pencernaan manusia adalah...",
-                    options: ["Mulut ➔ Kerongkongan ➔ Lambung ➔ Usus Halus ➔ Usus Besar ➔ Anus", "Mulut ➔ Lambung ➔ Kerongkongan ➔ Anus", "Mulut ➔ Usus Halus ➔ Lambung ➔ Kerongkongan", "Lambung ➔ Mulut ➔ Usus Besar ➔ Anus"],
-                    answer: 0,
-                    explanation: "Makanan masuk mulut, didorong kerongkongan, dicerna lambung, diserap usus halus, diserap airnya di usus besar, dan dibuang di anus.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="40" y="45" width="120" height="30" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/><text x="100" y="64" text-anchor="middle" font-size="10" font-weight="bold" fill="#0369a1">Urutan Sistem Pencernaan</text></svg>`
-                },
-                {
-                    topic: "Gigi Taring",
-                    question: "Jenis gigi manusia yang berfungsi untuk merobek makanan adalah...",
-                    options: ["Gigi taring", "Gigi seri", "Gigi geraham", "Gigi susu"],
-                    answer: 0,
-                    explanation: "Gigi taring berbentuk lancip dan tajam khusus untuk merobek daging atau makanan keras.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><polygon points="100,25 80,85 120,85" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Taring</text></svg>`
-                },
-                {
-                    topic: "Gigi Geraham",
-                    question: "Jenis gigi manusia yang memiliki permukaan luas untuk mengunyah dan menghaluskan makanan adalah...",
-                    options: ["Gigi geraham", "Gigi taring", "Gigi seri", "Gigi taring kecil"],
-                    answer: 0,
-                    explanation: "Gigi geraham memiliki tonjolan dan luas permukaan besar untuk melumatkan makanan.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="35" width="60" height="50" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Geraham</text></svg>`
-                },
-                {
-                    topic: "Gigi Seri",
-                    question: "Jenis gigi yang letaknya di depan dan berfungsi untuk memotong atau menggigit makanan adalah...",
-                    options: ["Gigi seri", "Gigi geraham", "Gigi taring", "Gigi bungsu"],
-                    answer: 0,
-                    explanation: "Gigi seri berbentuk seperti pahat untuk memotong makanan seperti buah atau roti.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="80" y="30" width="40" height="55" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Gigi Seri</text></svg>`
-                },
-                {
-                    topic: "Penjagaan Kesehatan",
-                    question: "Cara paling efektif untuk mencegah penyakit tipes dan diare yang menyerang pencernaan adalah...",
-                    options: ["Menjaga kebersihan makanan, minuman, dan alat makan", "Makan makanan cepat saji setiap hari", "Tidak pernah mencuci sayuran", "Minum air mentah langsung dari sungai"],
-                    answer: 0,
-                    explanation: "Menjaga kebersihan mencegah masuknya bakteri Salmonella atau E. coli penyebab infeksi.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#bbf7d0" stroke="#16a34a" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#15803d">Higienitas Makanan</text></svg>`
-                }
-            ],
-            hard: [
-                {
+                    id: 202,
                     topic: "Enzim Pepsin",
-                    question: "Di dalam lambung, enzim pepsin yang aktif bekerja bertugas khusus untuk memecah protein menjadi...",
-                    options: ["Pepton dan asam amino", "Asam lemak dan gliserol", "Zat gula sederhana", "Vitamin larut lemak"],
+                    question: "Di dalam lambung terdapat enzim pepsin. Apakah fungsi spesifik dari enzim pepsin terhadap makanan?",
+                    options: [
+                        "Mengubah protein menjadi pepton",
+                        "Mengubah lemak menjadi asam lemak",
+                        "Membunuh bakteri patokan di usus besar",
+                        "Menyerap vitamin C langsung"
+                    ],
                     answer: 0,
-                    explanation: "Pepsin adalah protease utama di lambung yang memecah protein kompleks menjadi pepton.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 30 C50 70 90 95 120 80 Z" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Enzim Pepsin Lambung</text></svg>`
+                    explanation: "Enzim pepsin di lambung bertugas memecah protein kompleks menjadi pepton yang lebih sederhana."
                 },
                 {
-                    topic: "Enzim Renin",
-                    question: "Enzim khusus yang hanya ditemukan pada lambung bayi untuk menggumpalkan protein susu (kasein) adalah...",
-                    options: ["Enzim renin", "Enzim ptialin", "Enzim tripsin", "Enzim ptyalin"],
+                    id: 203,
+                    topic: "Kondisi Kimiawi Lambung",
+                    question: "Kondisi di dalam lambung manusia bersifat sangat asam. Apa manfaat utama dari keasaman tinggi tersebut?",
+                    options: [
+                        "Mengaktifkan pepsin dan membunuh kuman/bakteri berbahaya",
+                        "Membuat makanan menjadi beku agar awet",
+                        "Mempercepat proses pembusukan feses",
+                        "Menghasilkan gas oksigen untuk tubuh"
+                    ],
                     answer: 0,
-                    explanation: "Enzim renin menggumpalkan protein susu agar tidak langsung lewat begitu saja dari lambung bayi.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="35" fill="#fecaca" stroke="#ef4444" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Enzim Renin</text></svg>`
+                    explanation: "Suasana asam mengaktifkan enzim pepsin sekaligus bertindak sebagai pertahanan pertama membunuh mikroorganisme."
                 },
                 {
-                    topic: "Usus 12 Jari",
-                    question: "Bagian pertama usus halus tempat bermuaranya saluran getah pankreas dan saluran empedu disebut...",
-                    options: ["Duodenum (usus 12 jari)", "Jejunum", "Ileum", "Sekum"],
+                    id: 204,
+                    topic: "Penyakit Maag",
+                    question: "Kebiasaan terlambat makan dapat memicu penyakit maag. Apa penyebab utama rasa nyeri pada penderita maag?",
+                    options: [
+                        "Asam lambung mengiritasi dinding lambung karena kosong",
+                        "Usus besar mengalami pembengkakan total",
+                        "Gigi geraham mengalami keropos",
+                        "Hati berhenti memproduksi darah"
+                    ],
                     answer: 0,
-                    explanation: "Duodenum menerima cairan empedu dari hati dan getah pankreas untuk pencernaan kimiawi lanjutan.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M60 40 Q100 20 140 40" fill="none" stroke="#38bdf8" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Duodenum (Usus 12 Jari)</text></svg>`
+                    explanation: "Saat terlambat makan, asam lambung tetap diproduksi namun tidak ada makanan yang dicerna, sehingga mengiritasi dinding lambung."
                 },
                 {
-                    topic: "Emulsi Lemak",
-                    question: "Mengapa cairan empedu sangat penting dalam pencernaan lemak padahal empedu tidak mengandung enzim?",
-                    options: ["Karena empedu mengemulsikan lemak menjadi butiran sangat kecil agar enzim lipase mudah bekerja", "Karena empedu langsung mengubah lemak menjadi energi otot", "Karena empedu membunuh seluruh bakteri usus", "Karena empedu mengubah lemak menjadi vitamin C"],
+                    id: 205,
+                    topic: "Gerakan Lambung",
+                    question: "Selain pencernaan kimiawi, lambung juga melakukan pencernaan mekanik melalui...",
+                    options: [
+                        "Gerakan meremas dan mengaduk oleh otot dinding lambung",
+                        "Getaran ultrasonik dari getah lambung",
+                        "Dorongan kuat dari limpa",
+                        "Penyaringan oleh empedu"
+                    ],
                     answer: 0,
-                    explanation: "Empedu bertindak sebagai deterjen alami yang memperluas luas permukaan lemak untuk diurai enzim lipase.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><ellipse cx="100" cy="60" rx="32" ry="18" fill="#facc15" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Emulsifikasi Lemak</text></svg>`
+                    explanation: "Otot dinding lambung berkontraksi kuat untuk mengaduk makanan dengan getah lambung menjadi bubur (kimus)."
+                }
+            ],
+            3: [ // Level 3: Nebula Misterius
+                {
+                    id: 301,
+                    topic: "Hati & Empedu",
+                    question: "Seseorang yang kantong empedunya diangkat disarankan mengurangi lemak tinggi. Mengapa demikian?",
+                    options: [
+                        "Pecahan lemak besar tidak dapat diemulsikan dengan efektif tanpa empedu.",
+                        "Hati berhenti total memproduksi sel darah merah.",
+                        "Usus halus kehilangan seluruh kemampuan menyerap air.",
+                        "Lambung akan langsung membusuk jika terkena lemak."
+                    ],
+                    answer: 0,
+                    explanation: "Cairan empedu berfungsi mengemulsikan lemak. Tanpa cadangan empedu, pencernaan lemak menjadi sangat berat."
                 },
                 {
-                    topic: "pH Lambung",
-                    question: "Lingkungan di dalam lambung bersifat sangat asam karena adanya HCl. Berapa kisaran tingkat pH normal di dalam lambung saat mencerna makanan?",
-                    options: ["pH 1.5 sampai 3.5 (sangat asam)", "pH 7.0 (netral)", "pH 9.0 sampai 11 (basa kuat)", "pH 14.0"],
+                    id: 302,
+                    topic: "Pankreas & Enzim",
+                    question: "Pankreas menghasilkan getah pankreas yang disalurkan ke usus halus. Enzim lipase yang dikandung pankreas berfungsi untuk...",
+                    options: [
+                        "Mencerna lemak menjadi asam lemak dan gliserol",
+                        "Mengubah amilum menjadi protein murni",
+                        "Membentuk vitamin D di bawah kulit",
+                        "Menyerap gas beracun di lambung"
+                    ],
                     answer: 0,
-                    explanation: "Keasaman tinggi (pH 1.5 - 3.5) diperlukan untuk membunuh mikroorganisme dan mengaktifkan pepsinogen.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#fecaca" stroke="#dc2626" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">pH Asam Lambung</text></svg>`
+                    explanation: "Enzim lipase pankreas bertugas menghidrolisis lemak menjadi asam lemak dan gliserol agar dapat diserap."
                 },
                 {
-                    topic: "Vitamin K & B12",
-                    question: "Vitamin apa saja yang disintesis (dihasilkan) oleh bakteri Escherichia coli di dalam usus besar manusia?",
-                    options: ["Vitamin K dan Vitamin B12", "Vitamin A dan Vitamin C", "Vitamin D murni", "Vitamin E"],
+                    id: 303,
+                    topic: "Enzim Amilase Pankreas",
+                    question: "Selain lipase, getah pankreas juga mengandung amilase pankreas yang berfungsi untuk...",
+                    options: [
+                        "Melanjutkan pencernaan sisa amilum menjadi maltosa",
+                        "Menghancurkan sel darah putih",
+                        "Membentuk tulang rawan usus",
+                        "Menghentikan pendarahan lambung"
+                    ],
                     answer: 0,
-                    explanation: "Bakteri usus besar bersimbiosis menghasilkan vitamin K (pembekuan darah) dan beberapa vitamin B.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#a7f3d0" stroke="#059669" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Vitamin K & B12</text></svg>`
+                    explanation: "Amilase pankreas memastikan seluruh karbohidrat yang belum tuntas di mulut dicerna sempurna di usus halus."
                 },
                 {
-                    topic: "Struktur Jonjot Usus",
-                    question: "Di dalam vili usus halus terdapat pembuluh darah kapiler dan pembuluh kil (lakteal). Apa fungsi utama pembuluh kil?",
-                    options: ["Menyerap dan mengangkut asam lemak serta gliserol", "Menyerap air seni", "Mengangkut oksigen murni", "Menghasilkan sel darah putih"],
+                    id: 304,
+                    topic: "Enzim Tripsin",
+                    question: "Enzim tripsin yang dihasilkan oleh pankreas bekerja di usus halus dengan tugas utama...",
+                    options: [
+                        "Mengubah pepton/protein menjadi asam amino",
+                        "Mengubah lemak jenuh menjadi vitamin",
+                        "Membentuk sel otot lurik baru",
+                        "Menetralkan racun di hati"
+                    ],
                     answer: 0,
-                    explanation: "Glukosa dan asam amino diserap kapiler darah, sedangkan asam lemak dan gliserol diserap pembuluh kil (limfa).",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="55" r="16" fill="#0284c7"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Pembuluh Kil (Lakteal)</text></svg>`
+                    explanation: "Tripsin melanjutkan pencernaan protein dengan memecah pepton menjadi asam amino siap serap."
                 },
                 {
-                    topic: "Absorpsi Air",
-                    question: "Jika usus besar mengalami gangguan sehingga gagal menyerap air secara optimal, kondisi medis apa yang akan dialami seseorang?",
-                    options: ["Diare (feses encer)", "Konstipasi akut", "Batu empedu", "Penyakit maag kronis"],
+                    id: 305,
+                    topic: "Peran Hati",
+                    question: "Selain menghasilkan cairan empedu, hati memiliki peran penting dalam metabolisme pencernaan yaitu...",
+                    options: [
+                        "Menetralisir racun yang ikut terserap bersama sari makanan",
+                        "Memproduksi sel darah putih pembunuh kuman",
+                        "Menyimpan sisa feses sebelum dibuang",
+                        "Mengontrol gerakan peristaltik kerongkongan"
+                    ],
                     answer: 0,
-                    explanation: "Kegagalan penyerapan air di usus besar menyebabkan feses berwujud cair atau diare.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="30" width="80" height="60" rx="15" fill="none" stroke="#f59e0b" stroke-width="10"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b45309">Patologi Diare</text></svg>`
+                    explanation: "Hati bertindak sebagai filter utama penyaring racun dan toksin dari sari makanan sebelum beredar ke seluruh tubuh."
+                }
+            ],
+            4: [ // Level 4: Planet Tantangan
+                {
+                    id: 401,
+                    topic: "Jonjot Usus (Vili)",
+                    question: "Struktur usus halus memiliki vili dan mikrovili seluas lapangan tenis. Apa keuntungan biologis utama adaptasi ini?",
+                    options: [
+                        "Memaksimalkan kecepatan dan efisiensi penyerapan sari-sari makanan ke darah.",
+                        "Membuat makanan bertahan lebih lama di dalam perut tanpa dicerna.",
+                        "Mencegah bakteri jahat masuk ke dalam aliran darah.",
+                        "Menghasilkan energi panas tubuh secara instan."
+                    ],
+                    answer: 0,
+                    explanation: "Luas permukaan vili memastikan seluruh nutrisi glukosa, asam amino, dan vitamin terserap sempurna ke pembuluh darah."
                 },
                 {
-                    topic: "Pankreatin",
-                    question: "Tripsinogen yang disekresikan pankreas akan diaktifkan menjadi enzim tripsin di usus halus oleh enzim khusus bernama...",
-                    options: ["Enterokinase", "Ptialin", "Pepsinogen", "Amilase saliva"],
+                    id: 402,
+                    topic: "Bagian Usus Halus",
+                    question: "Usus halus manusia terdiri atas tiga bagian utama. Urutan yang benar dari bagian awal hingga akhir adalah...",
+                    options: [
+                        "Duodenum (usus 12 jari) ➔ Jejunum (kosong) ➔ Ileum (penyerapan)",
+                        "Ileum ➔ Duodenum ➔ Jejunum",
+                        "Jejunum ➔ Ileum ➔ Duodenum",
+                        "Duodenum ➔ Ileum ➔ Jejunum"
+                    ],
                     answer: 0,
-                    explanation: "Enterokinase mengubah tripsinogen inaktif menjadi tripsin aktif untuk mencerna protein di usus halus.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="65" y="45" width="70" height="30" rx="10" href="#" fill="#fde047" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Enzim Enterokinase</text></svg>`
+                    explanation: "Pencernaan di usus halus dimulai di duodenum (12 jari), dilanjutkan jejunum, dan diserap di ileum."
                 },
                 {
-                    topic: "Peristaltik Usus",
-                    question: "Kontraksi otot polos secara ritmik yang mendorong kimus (bubur makanan) sepanjang saluran pencernaan diatur oleh sistem saraf...",
-                    options: ["Sistem saraf otonom (Enterik)", "Sistem saraf pusat sadar", "Sistem saraf motorik rangka", "Sistem saraf panca indra"],
+                    id: 403,
+                    topic: "Pencernaan Sempurna",
+                    question: "Mengapa usus halus disebut sebagai pusat pencernaan dan penyerapan nutrisi utama dalam tubuh?",
+                    options: [
+                        "Tempat pencernaan kimiawi terakhir dan penyerapan sari makanan terjadi",
+                        "Tempat pembusukan feses oleh bakteri E. coli",
+                        "Tempat memproduksi asam klorida berkadar tinggi",
+                        "Tempat membuang gas sisa pernapasan"
+                    ],
                     answer: 0,
-                    explanation: "Sistem saraf enterik mengatur pergerakan peristaltik secara otomatis tanpa bisa kita kendalikan secara sadar.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 40 Q100 80 150 40" fill="none" stroke="#0284c7" stroke-width="10"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Saraf Enterik / Otonom</text></svg>`
+                    explanation: "Di usus halus seluruh zat makanan diselesaikan pencernaannya dan diserap langsung ke pembuluh darah."
                 },
                 {
-                    topic: "Kimus (Chyme)",
-                    question: "Bubur makanan asam setengah cair yang keluar dari lambung menuju usus halus disebut dengan istilah...",
-                    options: ["Kimus (Chyme)", "Bolus", "Feses", "Empedu matang"],
+                    id: 404,
+                    topic: "Enzim di Usus Halus (Erepsin/Laktase)",
+                    question: "Getah usus halus menghasilkan berbagai enzim seperti laktase, maltase, dan sukrase. Apa fungsi enzim-enzim tersebut?",
+                    options: [
+                        "Memecah disakarida menjadi monosakarida (gula sederhana siap serap)",
+                        "Mengubah protein padat menjadi asam lemak",
+                        "Membunuh seluruh bakteri baik di pencernaan",
+                        "Membentuk cadangan lemak di bawah kulit"
+                    ],
                     answer: 0,
-                    explanation: "Makanan di lambung yang bercampur asam lambung disebut kimus sebelum masuk ke duodenum.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#854d0e">Bubur Kimus</text></svg>`
+                    explanation: "Enzim usus halus menyelesaikan pemecahan gula kompleks menjadi glukosa yang siap diserap tubuh."
                 },
                 {
-                    topic: "Bolus",
-                    question: "Sebelum masuk ke kerongkongan, gumpalan makanan yang telah dikunyah di dalam mulut disebut sebagai...",
-                    options: ["Bolus", "Kimus", "Chyle", "Feses"],
+                    id: 405,
+                    topic: "Penyerapan Lemak",
+                    question: "Sari makanan berupa asam lemak dan gliserol hasil pencernaan lemak diserap melalui...",
+                    options: [
+                        "Pembuluh kil (limfa) di dalam vili usus",
+                        "Pembuluh darah vena langsung ke jantung",
+                        "Dinding kerongkongan bagian atas",
+                        "Jonjot lambung sebelah kiri"
+                    ],
                     answer: 0,
-                    explanation: "Makanan yang dibentuk dan dileunakkan di mulut sebelum ditelan disebut bolus.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="30" fill="#fed7aa" stroke="#c2410c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Gumpalan Bolus</text></svg>`
+                    explanation: "Glukosa dan asam amino masuk ke pembuluh darah kapiler, sedangkan asam lemak & gliserol diserap pembuluh kil (limfa)."
+                }
+            ],
+            5: [ // Level 5: Pusat Galaksi
+                {
+                    id: 501,
+                    topic: "Bakteri Usus Besar (E. coli)",
+                    question: "Bakteri Escherichia coli di usus besar bersimbiosis dengan manusia. Peran vital apakah yang diemban bakteri ini?",
+                    options: [
+                        "Mensintesis Vitamin K yang esensial untuk pembekuan darah.",
+                        "Memproduksi oksigen murni untuk pernapasan sel.",
+                        "Mencerna seluruh serat selulosa tumbuhan secara total.",
+                        "Menghasilkan hormon insulin pengatur gula darah."
+                    ],
+                    answer: 0,
+                    explanation: "Bakteri E. coli di usus besar membantu menghasilkan vitamin K yang penting untuk pembekuan darah."
                 },
                 {
-                    topic: "Hati & Metabolisme",
-                    question: "Selain memproduksi empedu, hati memiliki peran vital dalam sistem pencernaan dan metabolisme dengan cara...",
-                    options: ["Menyimpan cadangan glukosa (glikogen) dan menawarkan racun (detoksifikasi)", "Memompa darah bersih ke otak", "Menghasilkan sel darah putih", "Menyaring udara pernapasan"],
+                    id: 502,
+                    topic: "Fungsi Usus Besar",
+                    question: "Apa fungsi utama dari usus besar (kolon) dalam sistem pencernaan makanan manusia?",
+                    options: [
+                        "Menyerap kadar air sisa dan membusukkan sisa makanan",
+                        "Tempat utama memproduksi asam lambung",
+                        "Menyerap seluruh protein dan vitamin C",
+                        "Mengunyah kembali makanan yang belum halus"
+                    ],
                     answer: 0,
-                    explanation: "Hati mendetoksifikasi racun dari darah serta mengatur kadar gula darah melalui penyimpanan glikogen.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M45 45 C50 20 120 20 150 45 Z" fill="#fb7185" stroke="#e11d48" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#be123c">Detoksifikasi Hati</text></svg>`
+                    explanation: "Usus besar menyerap kembali sisa air dari sisa makanan dan membentuk feses dengan bantuan bakteri pembusuk."
                 },
                 {
-                    topic: "Bakteri Patogen",
-                    question: "Infeksi bakteri Salmonella typhi pada saluran pencernaan manusia dapat menyebabkan penyakit berbahaya yaitu...",
-                    options: ["Demam Tifoid (Tipes)", "Penyakit Maag", "Konstipasi ringan", "Sembelit kronis"],
+                    id: 503,
+                    topic: "Anatomi Rektum & Anus",
+                    question: "Sebelum dikeluarkan melalui anus, sisa pencernaan yang sudah berbentuk padat (feses) akan disimpan sementara di dalam...",
+                    options: ["Rektum", "Duodenum", "Pankreas", "Empedu"],
                     answer: 0,
-                    explanation: "Bakteri Salmonella typhi menyerang saluran pencernaan dan menyebabkan demam tifoid.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="70" y="40" width="60" height="40" rx="10" fill="#fecaca" stroke="#ef4444" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#b91c1c">Bakteri Salmonella (Tipes)</text></svg>`
+                    explanation: "Rektum adalah bagian akhir usus besar yang berfungsi sebagai tempat penyimpanan sementara feses sebelum dikeluarkan."
                 },
                 {
-                    topic: "Usus Kosong (Jejunum)",
-                    question: "Bagian usus halus yang terletak di antara duodenum dan ileum serta memiliki panjang sekitar 2-3 meter adalah...",
-                    options: ["Jejunum (usus kosong)", "Kolon asendens", "Rektum", "Sekum"],
+                    id: 504,
+                    topic: "Penyakit Diare",
+                    question: "Seseorang yang mengalami diare sering buang air besar dengan feses yang cair. Apa gangguan utama yang terjadi di dalam usus besarnya?",
+                    options: [
+                        "Penyerapan air di usus besar terganggu/terlalu cepat",
+                        "Usus besar mengalami pembekuan total",
+                        "Bakteri E. coli menghasilkan vitamin K berlebih",
+                        "Lambung memproduksi enzim terlalu banyak"
+                    ],
                     answer: 0,
-                    explanation: "Jejunum adalah bagian kedua usus halus tempat sebagian besar pencernaan kimiawi dan penyerapan berlangsung.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 50 Q100 20 150 50" fill="none" stroke="#38bdf8" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Jejunum (Usus Kosong)</text></svg>`
+                    explanation: "Diare terjadi jika infeksi membuat usus besar gagal menyerap air kembali secara normal, sehingga feses berair."
                 },
                 {
-                    topic: "Usus Penyerapan (Ileum)",
-                    question: "Bagian akhir dari usus halus yang terhubung langsung dengan usus besar adalah...",
-                    options: ["Ileum (usus penyerapan)", "Duodenum", "Pilorus", "Kardiak"],
+                    id: 505,
+                    topic: "Pencegahan Gangguan Pencernaan",
+                    question: "Bagaimana cara terbaik menjaga kesehatan organ pencernaan agar terhindar dari konstipasi (sembelit)?",
+                    options: [
+                        "Mengonsumsi makanan berserat tinggi (sayur/buah) dan cukup minum air putih",
+                        "Menghindari makan sama sekali selama seminggu",
+                        "Mengonsumsi makanan pedas setiap hari",
+                        "Tidur segera setelah makan besar"
+                    ],
                     answer: 0,
-                    explanation: "Ileum berfungsi menyelesaikan penyerapan nutrisi sisa sebelum masuk ke usus besar.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M50 60 Q100 20 150 60" fill="none" stroke="#0284c7" stroke-width="12"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Ileum (Usus Penyerapan)</text></svg>`
-                },
-                {
-                    topic: "Sfingter Pilorus",
-                    question: "Katup otot berbentuk cincin yang mengatur pengeluaran kimus dari lambung menuju usus 12 jari disebut...",
-                    options: ["Sfingter pilorus", "Sfingter kardia", "Katup epiglotis", "Katup aorta"],
-                    answer: 0,
-                    explanation: "Sfingter pilorus membuka secara bertahap agar usus 12 jari tidak kewalahan menerima kimus asam dari lambung.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="28" fill="#fca5a5" stroke="#b91c1c" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#991b1b">Sfingter Pilorus</text></svg>`
-                },
-                {
-                    topic: "Epiglotis",
-                    question: "Katup tulang rawan yang menutup saluran pernapasan (tenggorokan) saat kita menelan makanan agar tidak tersedak adalah...",
-                    options: ["Epiglotis", "Uvula", "Tonsil", "Faring"],
-                    answer: 0,
-                    explanation: "Epiglotis memastikan makanan masuk ke kerongkongan dan bukan ke saluran pernapasan.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><path d="M70 50 Q100 20 130 50" fill="none" stroke="#ea580c" stroke-width="8"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#c2410c">Katup Epiglotis</text></svg>`
-                },
-                {
-                    topic: "Gerakan Massal Usus",
-                    question: "Gerakan kontraksi kuat di usus besar yang mendorong feses menuju rektum menjelang buang air besar disebut...",
-                    options: ["Gerakan massa (mass movement)", "Gerak peristaltik lambat", "Gerak osmotik", "Refleks muntah"],
-                    answer: 0,
-                    explanation: "Gerakan massa mendorong isi usus besar ke rektum untuk memicu refleks defekasi.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><rect x="60" y="25" width="80" height="70" rx="15" fill="none" stroke="#10b981" stroke-width="14"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">Gerakan Massa Usus Besar</text></svg>`
-                },
-                {
-                    topic: "Enzim Sukrase & Laktase",
-                    question: "Di dalam usus halus, dinding usus menghasilkan enzim yang merombak disakarida menjadi monosakarida, contohnya enzim...",
-                    options: ["Sukrase, maltase, dan laktase", "Pepsin dan renin", "Ptialin dan amilase", "Lipase lambung"],
-                    answer: 0,
-                    explanation: "Enzim disakaridase seperti laktase mencerna laktosa menjadi glukosa dan galaktosa agar siap diserap.",
-                    svgIllustration: `<svg viewBox="0 0 200 120" class="w-full h-full"><circle cx="100" cy="60" r="32" fill="#bae6fd" stroke="#0284c7" stroke-width="3"/><text x="100" y="112" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">Sukrase, Maltase, Laktase</text></svg>`
+                    explanation: "Serat makanan memperlancar gerak peristaltik usus besar dan mencegah feses menjadi terlalu kering (konstipasi)."
                 }
             ]
         };
 
+        // Tracking used questions per level session to prevent repetition
+        let levelUsedQuestions = { 1: [], 2: [], 3: [], 4: [], 5: [] };
+
         let currentActiveQuiz = null;
         let quizTimerInterval = null;
         let quizTimeLeft = 30;
+        let isGoldUfoQuiz = false;
+        let pendingLevelComplete = false;
 
-        function openQuizModal() {
+        function openQuizModal(isGold = false) {
             gamePaused = true;
             playSound('pop');
+            isGoldUfoQuiz = isGold;
 
-            const currentBank = quizBanks[difficulty] || quizBanks['easy'];
-            const q = currentBank[Math.floor(Math.random() * currentBank.length)];
-            currentActiveQuiz = q;
+            const bank = levelQuestionBanks[selectedLevel] || levelQuestionBanks[1];
+            let available = bank.filter(q => !levelUsedQuestions[selectedLevel].includes(q.id));
+            
+            if (available.length === 0) {
+                levelUsedQuestions[selectedLevel] = [];
+                available = bank;
+            }
 
-            document.getElementById('quizBadge').textContent = `Topik: ${q.topic} (${difficulty.toUpperCase()})`;
-            document.getElementById('quizQuestion').textContent = q.question;
-            document.getElementById('quizIllustration').innerHTML = q.svgIllustration;
+            const qTemplate = available[Math.floor(Math.random() * available.length)];
+            levelUsedQuestions[selectedLevel].push(qTemplate.id);
+
+            const originalOptions = [...qTemplate.options];
+            const correctText = originalOptions[qTemplate.answer];
+            
+            let shuffledIndices = [0, 1, 2, 3];
+            for (let i = shuffledIndices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+            }
+
+            const randomizedOptions = shuffledIndices.map(idx => originalOptions[idx]);
+            const newCorrectIndex = randomizedOptions.indexOf(correctText);
+
+            currentActiveQuiz = {
+                id: qTemplate.id,
+                topic: qTemplate.topic,
+                question: qTemplate.question,
+                options: randomizedOptions,
+                answer: newCorrectIndex,
+                explanation: qTemplate.explanation
+            };
+
+            document.getElementById('quizBadge').textContent = isGold ? `🌟 Kuis UFO Emas (HOTS)` : `🛸 Kuis Tantangan Level ${selectedLevel}`;
+            document.getElementById('quizQuestion').textContent = currentActiveQuiz.question;
             
             const optionsContainer = document.getElementById('quizOptions');
             optionsContainer.innerHTML = '';
             
-            q.options.forEach((opt, idx) => {
+            currentActiveQuiz.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = "w-full text-left p-3 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-xs sm:text-sm font-medium text-slate-800 transition flex items-center justify-between shadow-sm";
+                btn.className = "w-full text-left p-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-sky-500/30 text-xs sm:text-sm font-medium text-slate-100 transition flex items-center justify-between shadow-sm min-h-[44px]";
                 btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span>`;
                 btn.onclick = () => answerQuiz(idx);
                 optionsContainer.appendChild(btn);
@@ -1161,15 +1195,36 @@
             const isCorrect = (selectedIndex === currentActiveQuiz.answer);
             if (isCorrect) {
                 correctAnswersCount++;
-                score += (difficulty === 'hard' ? 250 : difficulty === 'medium' ? 200 : 150);
+                currentStreak++;
+                levelCorrectCount++; // Increment correct answers for current level (target 5)
+                currentUfosCollected += (isGoldUfoQuiz ? 3 : 1);
+                gameProgress.totalUfos += (isGoldUfoQuiz ? 3 : 1);
+
+                let basePts = isGoldUfoQuiz ? 350 : 150;
+                if (currentStreak >= 3) {
+                    basePts += 100;
+                }
+                score += basePts;
+
                 playSound('correct');
                 triggerFeedback('green');
+
+                document.getElementById('explanationTitle').textContent = "💡 Pembahasan Analitis:";
+
+                // Check if 5 correct answers reached for this level
+                if (levelCorrectCount >= 5) {
+                    pendingLevelComplete = true;
+                }
             } else {
-                lives--;
+                lives--; // Reduce 1 life on wrong answer
+                currentStreak = 0;
                 playSound('wrong');
                 triggerFeedback('red');
+
+                document.getElementById('explanationTitle').textContent = `❌ Ups! Jawaban belum tepat. Nyawamu berkurang 1 ❤️`;
             }
             updateHUD();
+            saveProgressToLocalStorage();
 
             evaluationLog.push({
                 question: currentActiveQuiz.question,
@@ -1181,9 +1236,9 @@
             for(let i=0; i<options.length; i++) {
                 options[i].disabled = true;
                 if(i === currentActiveQuiz.answer) {
-                    options[i].classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+                    options[i].classList.add('bg-emerald-900/60', 'border-emerald-500', 'text-emerald-200');
                 } else if(i === selectedIndex && !isCorrect) {
-                    options[i].classList.add('bg-rose-100', 'border-rose-500', 'text-rose-800');
+                    options[i].classList.add('bg-rose-900/60', 'border-rose-500', 'text-rose-200');
                 }
             }
 
@@ -1191,10 +1246,21 @@
             document.getElementById('quizExplanation').classList.remove('hidden');
 
             if (lives <= 0) {
-                setTimeout(() => {
-                    closeQuizModal();
-                    endGame(false);
-                }, 1500);
+                // Do not dismiss immediately; wait for modal confirmation or trigger game over modal on dismiss
+            }
+        }
+
+        function dismissQuizModal() {
+            if (lives <= 0) {
+                closeQuizModal();
+                showGameOverModal();
+                return;
+            }
+
+            closeQuizModal();
+            if (pendingLevelComplete) {
+                pendingLevelComplete = false;
+                showLevelCompletePopup();
             }
         }
 
@@ -1202,6 +1268,79 @@
             document.getElementById('quizModal').classList.remove('flex');
             document.getElementById('quizModal').classList.add('hidden');
             gamePaused = false;
+        }
+
+        function showLevelCompletePopup() {
+            stopCanvasGame();
+            playSound('win');
+
+            const titleEl = document.getElementById('levelCompleteTitle');
+            const descEl = document.getElementById('levelCompleteDesc');
+            const btnEl = document.getElementById('proceedLevelBtn');
+
+            if (selectedLevel < 5) {
+                titleEl.textContent = `🎉 LEVEL ${selectedLevel} BERHASIL DISELESAIKAN! 🚀`;
+                descEl.textContent = `Kamu berhasil menjawab 5 soal dengan benar. Sisa nyawamu: ${lives} ❤️. Bersiaplah menjelajahi galaksi berikutnya!`;
+                btnEl.textContent = `LANJUT KE LEVEL ${selectedLevel + 1} 🚀`;
+            } else {
+                titleEl.textContent = `🏆 SELAMAT! SEMUA LEVEL SELESAI! 🌟`;
+                descEl.textContent = `Luar biasa! Kamu telah menaklukkan seluruh galaksi dan membuktikan diri sebagai Master Penjelajah Galaksi!`;
+                btnEl.textContent = `LIHAT LAPORAN AKHIR 🏆`;
+            }
+
+            document.getElementById('levelCompleteModal').classList.remove('hidden');
+            document.getElementById('levelCompleteModal').classList.add('flex');
+        }
+
+        function showGameOverModal() {
+            stopCanvasGame();
+            playSound('wrong');
+
+            document.getElementById('goScore').textContent = score;
+            document.getElementById('goUfos').textContent = currentUfosCollected;
+            document.getElementById('goLevel').textContent = selectedLevel;
+
+            document.getElementById('gameOverModal').classList.remove('hidden');
+            document.getElementById('gameOverModal').classList.add('flex');
+
+            const reportData = {
+                timestamp: new Date().toLocaleString('id-ID'),
+                name: playerName,
+                playerClass: playerClass,
+                difficulty: `Level ${selectedLevel} (${levelConfigs[selectedLevel].name})`,
+                score: score,
+                correctCount: correctAnswersCount,
+                totalAnswered: questionsAnsweredCount,
+                status: 'Game Over (Nyawa Habis)'
+            };
+            sendDataToGoogleSheet(reportData);
+        }
+
+        function restartGameFromBeginning() {
+            document.getElementById('gameOverModal').classList.remove('flex');
+            document.getElementById('gameOverModal').classList.add('hidden');
+            selectedLevel = 1;
+            startGameSession();
+        }
+
+        function proceedToNextLevel() {
+            document.getElementById('levelCompleteModal').classList.remove('flex');
+            document.getElementById('levelCompleteModal').classList.add('hidden');
+
+            if (selectedLevel < 5) {
+                selectedLevel++;
+                if (selectedLevel > gameProgress.maxLevelUnlocked) {
+                    gameProgress.maxLevelUnlocked = selectedLevel;
+                    saveProgressToLocalStorage();
+                }
+                levelCorrectCount = 0;
+                timeLeft = levelConfigs[selectedLevel].timer;
+                levelUsedQuestions[selectedLevel] = [];
+                updateHUD();
+                startCanvasGame();
+            } else {
+                endGame(true);
+            }
         }
 
         function triggerFeedback(color) {
@@ -1213,13 +1352,12 @@
             }, 300);
         }
 
-        // --- CANVAS GAME ENGINE ---
+        // --- CANVAS GAME ENGINE (GALAXY CHALLENGE) ---
         let canvas, ctx;
         let gameRunning = false;
         let gamePaused = false;
         let animationFrameId = null;
         let score = 0;
-        let lives = 3;
         let timeLeft = 120;
         let questionsAnsweredCount = 0;
         let correctAnswersCount = 0;
@@ -1280,7 +1418,7 @@
                     x: shooter.x,
                     y: shooter.y - 12,
                     radius: 6,
-                    speed: 11
+                    speed: 12
                 });
                 playSound('click');
             }
@@ -1307,14 +1445,14 @@
 
         function updateGame() {
             frameCounter++;
-            const config = diffConfig[difficulty];
+            const cfg = levelConfigs[selectedLevel];
 
             if (shooter.moveLeft) shooter.x -= shooter.speed;
             if (shooter.moveRight) shooter.x += shooter.speed;
-            shooter.x = Math.max(20, Math.min(canvas.width - 20, shooter.x));
+            shooter.x = Math.max(25, Math.min(canvas.width - 25, shooter.x));
 
-            if (frameCounter % config.spawnRate === 0 && balloons.length < config.maxBalloons) {
-                spawnBalloon();
+            if (frameCounter % cfg.spawnRate === 0 && balloons.length < cfg.maxUfos) {
+                spawnUfo();
             }
 
             for (let i = projectiles.length - 1; i >= 0; i--) {
@@ -1326,31 +1464,32 @@
             }
 
             for (let i = balloons.length - 1; i >= 0; i--) {
-                let b = balloons[i];
-                b.x += b.vx;
-                b.y += b.vy;
+                let u = balloons[i];
+                u.x += u.vx;
+                u.y += u.vy;
 
-                if (b.x < 30 || b.x > canvas.width - 30) {
-                    b.vx *= -1;
+                if (u.x < 35 || u.x > canvas.width - 35) {
+                    u.vx *= -1;
                 }
 
                 let hitByProjectile = false;
                 for (let j = projectiles.length - 1; j >= 0; j--) {
                     let p = projectiles[j];
-                    let dist = Math.hypot(p.x - b.x, p.y - b.y);
-                    if (dist < b.radius + p.radius) {
+                    let dist = Math.hypot(p.x - u.x, p.y - u.y);
+                    if (dist < u.radius + p.radius) {
                         projectiles.splice(j, 1);
                         hitByProjectile = true;
                         break;
                     }
                 }
 
-                if (hitByProjectile || b.y > canvas.height + 40) {
+                if (hitByProjectile || u.y > canvas.height + 40) {
                     if (hitByProjectile) {
+                        const isGold = u.isGold;
                         balloons.splice(i, 1);
-                        score += 50;
+                        score += (isGold ? 100 : 50);
                         updateHUD();
-                        openQuizModal();
+                        openQuizModal(isGold);
                     } else {
                         balloons.splice(i, 1);
                     }
@@ -1358,63 +1497,68 @@
             }
         }
 
-        function spawnBalloon() {
-            const radius = Math.max(24, Math.min(canvas.width * 0.07, 32));
+        function spawnUfo() {
+            const radius = Math.max(26, Math.min(canvas.width * 0.08, 36));
             const side = Math.floor(Math.random() * 3);
             let x, vx, vy;
-            const speed = (Math.random() * 1.5 + 1.8) * diffConfig[difficulty].speedMultiplier;
+            const speed = (Math.random() * 1.5 + 1.8) * levelConfigs[selectedLevel].speedMul;
 
             if (side === 0) {
-                x = Math.random() * (canvas.width * 0.3) + 30;
+                x = Math.random() * (canvas.width * 0.3) + 35;
                 vx = Math.random() * 1.8 + 0.8;
                 vy = speed;
             } else if (side === 1) {
-                x = canvas.width - (Math.random() * (canvas.width * 0.3) + 30);
+                x = canvas.width - (Math.random() * (canvas.width * 0.3) + 35);
                 vx = -(Math.random() * 1.8 + 0.8);
                 vy = speed;
             } else {
                 x = Math.random() * (canvas.width - 100) + 50;
-                vx = (Math.random() - 0.5) * 1.2;
-                vy = speed * 1.15;
+                vx = (Math.random() - 0.5) * 1.4;
+                vy = speed * 1.1;
             }
 
-            const y = -30;
-            const color = ['#38bdf8', '#a855f7', '#10b981', '#f59e0b', '#ec4899', '#6366f1'][Math.floor(Math.random() * 6)];
+            const y = -35;
+            const isGold = (Math.random() < 0.22);
+            const color = isGold ? '#f59e0b' : ['#38bdf8', '#a855f7', '#10b981', '#6366f1'][Math.floor(Math.random() * 4)];
 
-            balloons.push({ x, y, vx, vy, radius, color });
+            balloons.push({ x, y, vx, vy, radius, color, isGold });
         }
 
         function renderGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = 'rgba(2, 132, 199, 0.9)';
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.9)';
             ctx.font = 'bold 11px Poppins';
-            ctx.fillText("🛸 Gastro Galaxy • Misi UFO Pencernaan", 16, 45);
+            ctx.fillText(`🚀 Galaxy Challenge • ${levelConfigs[selectedLevel].name}`, 16, 55);
 
+            // Draw projectiles
             projectiles.forEach(p => {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#0284c7';
+                ctx.fillStyle = '#38bdf8';
                 ctx.shadowColor = '#38bdf8';
-                ctx.shadowBlur = 12;
+                ctx.shadowBlur = 15;
                 ctx.fill();
                 ctx.shadowBlur = 0;
             });
 
+            // Draw UFOs
             balloons.forEach(u => {
                 ctx.save();
                 ctx.translate(u.x, u.y);
 
+                // Dome
                 ctx.beginPath();
                 ctx.arc(0, -u.radius * 0.3, u.radius * 0.5, Math.PI, 0, false);
-                ctx.fillStyle = 'rgba(224, 242, 254, 0.9)';
+                ctx.fillStyle = u.isGold ? 'rgba(254, 240, 138, 0.95)' : 'rgba(224, 242, 254, 0.9)';
                 ctx.shadowColor = u.color;
-                ctx.shadowBlur = 12;
+                ctx.shadowBlur = 15;
                 ctx.fill();
                 ctx.lineWidth = 1.5;
-                ctx.strokeStyle = '#0284c7';
+                ctx.strokeStyle = u.isGold ? '#ca8a04' : '#0284c7';
                 ctx.stroke();
 
+                // Disc Body
                 ctx.beginPath();
                 ctx.ellipse(0, 0, u.radius, u.radius * 0.38, 0, 0, Math.PI * 2);
                 ctx.fillStyle = u.color;
@@ -1423,10 +1567,11 @@
                 ctx.strokeStyle = '#ffffff';
                 ctx.stroke();
 
+                // Lights
                 for (let i = -2; i <= 2; i++) {
                     ctx.beginPath();
                     ctx.arc(i * (u.radius * 0.35), u.radius * 0.05, 2.5, 0, Math.PI * 2);
-                    ctx.fillStyle = '#fef08a';
+                    ctx.fillStyle = u.isGold ? '#ffffff' : '#fef08a';
                     ctx.fill();
                 }
 
@@ -1434,30 +1579,31 @@
                 ctx.restore();
             });
 
+            // Draw Spaceship
             ctx.save();
             ctx.translate(shooter.x, shooter.y);
 
             ctx.beginPath();
             ctx.arc(0, 12, 18, 0, Math.PI * 2);
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#1e293b';
             ctx.fill();
             ctx.lineWidth = 3;
-            ctx.strokeStyle = '#0284c7';
+            ctx.strokeStyle = '#38bdf8';
             ctx.stroke();
 
             ctx.beginPath();
             ctx.rect(-4, -14, 8, 26);
-            ctx.fillStyle = '#0284c7';
+            ctx.fillStyle = '#38bdf8';
             ctx.fill();
 
             ctx.beginPath();
-            ctx.moveTo(0, -26);
+            ctx.moveTo(0, -28);
             ctx.lineTo(-12, -10);
             ctx.lineTo(12, -10);
             ctx.closePath();
-            ctx.fillStyle = '#ef4444';
-            ctx.shadowColor = '#ef4444';
-            ctx.shadowBlur = 8;
+            ctx.fillStyle = '#f43f5e';
+            ctx.shadowColor = '#f43f5e';
+            ctx.shadowBlur = 10;
             ctx.fill();
             ctx.shadowBlur = 0;
 
@@ -1470,13 +1616,13 @@
             playSound(isVictory ? 'win' : 'wrong');
 
             document.getElementById('resultEmoji').textContent = isVictory ? '🏆' : '💥';
-            document.getElementById('resultTitle').textContent = isVictory ? 'Misi Sukses!' : 'Misi Berakhir!';
-            document.getElementById('resultSubtitle').textContent = isVictory ? 'Hebat! Kamu menguasai sistem pencernaan!' : 'Tetap semangat! Coba pelajari lagi materinya.';
+            document.getElementById('resultTitle').textContent = isVictory ? 'Misi Galaksi Sukses!' : 'Waktu Habis!';
+            document.getElementById('resultSubtitle').textContent = isVictory ? 'Luar biasa! Kamu menaklukkan galaksi ini!' : 'Batas waktu misi telah tercapai.';
 
             let stars = 1;
             const ratio = correctAnswersCount / Math.max(1, questionsAnsweredCount);
-            if (score >= 400 || ratio >= 0.75) stars = 3;
-            else if (score >= 200 || ratio >= 0.5) stars = 2;
+            if (score >= 500 || ratio >= 0.75) stars = 3;
+            else if (score >= 250 || ratio >= 0.5) stars = 2;
 
             let starStr = '';
             for (let i = 0; i < 3; i++) {
@@ -1484,44 +1630,70 @@
             }
             document.getElementById('starContainer').textContent = starStr;
             document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalUfos').textContent = currentUfosCollected;
             document.getElementById('finalCorrect').textContent = `${correctAnswersCount}/${questionsAnsweredCount}`;
+
+            const nextLvl = selectedLevel + 1;
+            const nextBtn = document.getElementById('nextLevelBtn');
+            const badgeBox = document.getElementById('badgeRewardBox');
+
+            if (isVictory && selectedLevel < 5) {
+                if (nextLvl > gameProgress.maxLevelUnlocked) {
+                    gameProgress.maxLevelUnlocked = nextLvl;
+                    saveProgressToLocalStorage();
+                }
+                nextBtn.textContent = `🚀 Lanjut ke Level ${nextLvl}`;
+                nextBtn.onclick = () => {
+                    selectedLevel = nextLvl;
+                    levelCorrectCount = 0;
+                    startGameSession();
+                };
+            } else if (isVictory && selectedLevel === 5) {
+                badgeBox.classList.remove('hidden');
+                nextBtn.textContent = `🔄 Main Ulang Pusat Galaksi`;
+                nextBtn.onclick = () => { selectedLevel = 5; levelCorrectCount = 0; startGameSession(); };
+            } else {
+                nextBtn.textContent = `🔄 Coba Ulang Level ${selectedLevel}`;
+                nextBtn.onclick = () => { levelCorrectCount = 0; startGameSession(); };
+            }
+
+            if (score > gameProgress.highScore) {
+                gameProgress.highScore = score;
+                saveProgressToLocalStorage();
+            }
 
             const reportData = {
                 timestamp: new Date().toLocaleString('id-ID'),
                 name: playerName,
                 playerClass: playerClass,
-                difficulty: difficulty,
+                difficulty: `Level ${selectedLevel} (${levelConfigs[selectedLevel].name})`,
                 score: score,
                 correctCount: correctAnswersCount,
                 totalAnswered: questionsAnsweredCount,
-                status: isVictory ? 'Menang' : 'Selesai'
+                status: isVictory ? 'Menang' : 'Waktu Habis'
             };
             sendDataToGoogleSheet(reportData);
 
             const evalList = document.getElementById('evaluationList');
             evalList.innerHTML = '';
             if (evaluationLog.length === 0) {
-                evalList.innerHTML = '<p class="text-slate-500 text-center">Belum ada soal terjawab.</p>';
+                evalList.innerHTML = '<p class="text-slate-400 text-center">Belum ada soal kuis terjawab.</p>';
             } else {
                 evaluationLog.forEach((log, idx) => {
                     const div = document.createElement('div');
-                    div.className = "p-2 rounded-xl bg-sky-50/70 border border-sky-100 space-y-1";
+                    div.className = "p-2 rounded-xl bg-slate-900 border border-sky-500/20 space-y-1";
                     div.innerHTML = `
                         <div class="flex items-center space-x-1">
                             <span>${log.correct ? '✅' : '❌'}</span>
-                            <span class="font-bold text-slate-800">Soal ${idx + 1}</span>
+                            <span class="font-bold text-slate-100">Kuis ${idx + 1}</span>
                         </div>
-                        <p class="text-slate-600 text-[11px]">${log.explanation}</p>
+                        <p class="text-slate-300 text-[11px]">${log.explanation}</p>
                     `;
                     evalList.appendChild(div);
                 });
             }
 
             goToScreen('resultScreen');
-        }
-
-        function restartGame() {
-            startGameSession();
         }
     </script>
 </body>
